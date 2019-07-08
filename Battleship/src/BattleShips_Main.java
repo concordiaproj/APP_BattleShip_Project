@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class BattleShips_Main {
 //	static List<Integer> available_X = new ArrayList<>();
-//	static List<Integer> available_Y = new ArrayList<>();//
+//	static List<Integer> available_Y = new ArrayList<>();////
 	static LinkedList<Integer> availableCoordinates[] = new LinkedList[10];
 	static List<List<shipCoordinates>> lstAllShips_Player = new ArrayList<>();
 	static List<List<shipCoordinates>> lstAllShips_Computer = new ArrayList<>();
