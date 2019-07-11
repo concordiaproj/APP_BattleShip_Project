@@ -1,22 +1,18 @@
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
-	static LinkedList<Integer> availableCoordinates[] = new LinkedList[10];
-	static List<List<shipCoordinates>> lstAllShips_Player = new ArrayList<>();
-	static List<List<shipCoordinates>> lstAllShips_Computer = new ArrayList<>();
-	static char[][] sea = new char[10][10];
-	static char[][] seaComputerForPlayer = new char[10][10];
-	static char[][] seaComputer = new char[10][10];
+	List<List<ShipCoordinates>> lstAllShips_Player = new ArrayList<>();
+	List<List<ShipCoordinates>> lstAllShips_Computer = new ArrayList<>();
+	char[][] sea = new char[10][10];
+	char[][] seaComputerForPlayer = new char[10][10];
+	char[][] seaComputer = new char[10][10];
 
-	public Game(LinkedList<Integer> availableCoordinates[], List<List<shipCoordinates>> lstAllShips_Player,
-			List<List<shipCoordinates>> lstAllShips_Computer, char[][] sea, char[][] seaComputerForPlayer,
-			char[][] seaComputer) {
+	public Game(List<List<ShipCoordinates>> lstAllShips_Player, List<List<ShipCoordinates>> lstAllShips_Computer,
+			char[][] sea, char[][] seaComputerForPlayer, char[][] seaComputer) {
 		// TODO Auto-generated constructor stub
-		this.availableCoordinates = availableCoordinates;
 		this.lstAllShips_Player = lstAllShips_Player;
 		this.lstAllShips_Computer = lstAllShips_Computer;
 		this.sea = sea;
@@ -24,7 +20,7 @@ public class Game {
 		this.seaComputer = seaComputer;
 	}
 
-	public static void startGame() {
+	public void startGame() {
 
 		// TODO Auto-generated method stub
 		Scanner scn = new Scanner(System.in);
@@ -53,7 +49,7 @@ public class Game {
 						System.out.println();
 					}
 					System.out.println("\n\n");
-				} else {// miss
+				} else if (seaComputer[X][Y] == ' ') {// miss
 					// remove missed point
 					seaComputerForPlayer[X][Y] = 'M';
 					System.out.println("Oh no! You missed the target !! Better luck next time !");
@@ -67,6 +63,8 @@ public class Game {
 					}
 					System.out.println("\n\n");
 					break w2;
+				} else {
+					System.out.println("You already hit on the same place, Please try again on different place.");
 				}
 			}
 			w3: while (true) {// refactor -done
@@ -110,14 +108,10 @@ public class Game {
 
 	}
 
-	private static boolean removeHitPoint(int x, int y, String battleTurn) {
-		// TODO Auto-generated method stub
-		System.out.println("x:" + x + ", y:" + y);
+	private boolean removeHitPoint(int x, int y, String battleTurn) {
 		if (battleTurn.equalsIgnoreCase("player")) {
 			for (int i = 0; i < lstAllShips_Computer.size(); i++) {
 				for (int j = 0; j < lstAllShips_Computer.get(i).size(); j++) {
-					System.out.println("xcoord:" + lstAllShips_Computer.get(i).get(j).Xcoord + ", ycoord:"
-							+ lstAllShips_Computer.get(i).get(j).Ycoord);
 					if (lstAllShips_Computer.get(i).get(j).Xcoord == x
 							&& lstAllShips_Computer.get(i).get(j).Ycoord == y) {
 						lstAllShips_Computer.get(i).remove(j);
@@ -145,7 +139,7 @@ public class Game {
 		return false;
 	}
 
-	private static boolean allShipHit(List<List<shipCoordinates>> lstAllShips_Player) {
+	private boolean allShipHit(List<List<ShipCoordinates>> lstAllShips_Player) {
 		for (int i = 0; i < lstAllShips_Player.size(); i++) {
 			if (lstAllShips_Player.get(i).size() > 0)
 				return false;
