@@ -205,7 +205,8 @@ public class Battlefield extends Parent {
 	}
 
 	private static boolean allShipsSunk(Block blk) {
-		// TODO Auto-generated method stub
+		
+		
 		if (blk.bf.id == 1)// player
 		{
 			for (int i = 0; i < Main.lstAllShips_Player.size(); i++) {
