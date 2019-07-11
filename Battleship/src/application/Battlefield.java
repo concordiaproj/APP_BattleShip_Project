@@ -42,7 +42,6 @@ public class Battlefield extends Parent {
 		List<Block> lstTemp = new ArrayList<>();
 
 		System.out.println("line37:" + this.id);
-
 		if (isValidToPlaceShip(isHorizontal, x, y, shipLength)) {
 			// check for is valid coordinates
 			if (isHorizontal == false) {
@@ -89,7 +88,7 @@ public class Battlefield extends Parent {
 	}
 
 	private boolean isValidToPlaceShip(boolean isHorizontal, int x, int y, int shipLength) {
-		// TODO Auto-generated method stub
+	
 		if (isHorizontal) {
 //			System.out.println("hor");
 			if (x + shipLength - 1 <= 9) {
@@ -148,7 +147,7 @@ public class Battlefield extends Parent {
 	}
 
 	public static boolean isHit(Block blk) {
-		// TODO Auto-generated method stub
+		
 		boolean needToShowAlert = false;
 		if (blk.occupiedFor == 'S') {
 			if (removeFromList(blk)) {
