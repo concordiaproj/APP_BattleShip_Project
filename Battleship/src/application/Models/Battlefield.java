@@ -76,12 +76,12 @@ public class Battlefield extends Parent {
 	public boolean startPlaceShip(int intShipLength, boolean boolIsHorizontal, int x, int y, boolean boolIsPlayer) {
 		List<Block> lstTemp = new ArrayList<>();
 
-		System.out.println("line37:" + this.id);
+//		System.out.println("line37:" + this.id);
 
 		if (isValidToPlaceShip(boolIsHorizontal, x, y, intShipLength)) {
 			// check for is valid coordinates
 			if (boolIsHorizontal == false) {
-				System.out.println("-----Vertical----");
+//				System.out.println("-----Vertical----");
 				for (int i = y; i < y + intShipLength; i++) {
 
 					Block blk = getBlock(x, i);
@@ -102,7 +102,7 @@ public class Battlefield extends Parent {
 				else
 					Main.lstAllShips_Computer.add(lstTemp);
 			} else {
-				System.out.println("-----Horizontal----");
+//				System.out.println("-----Horizontal----");
 				for (int i = x; i < x + intShipLength; i++) {
 					Block blk = getBlock(i, y);
 //				System.out.println("bf in startplaceship hor:" + blk.bf.id);
@@ -323,40 +323,40 @@ public class Battlefield extends Parent {
 		// TODO Auto-generated method stub
 		if (blk.bf.id == 1)// Player
 		{
-			for (int i = 0; i < Main.lstAllShips_Player.size(); i++) {
-				System.out.print("-" + Main.lstAllShips_Player.get(i).size());
-			}
-			System.out.println();
+//			for (int i = 0; i < Main.lstAllShips_Player.size(); i++) {
+//				System.out.print("-" + Main.lstAllShips_Player.get(i).size());
+//			}
+//			System.out.println();
 			f1: for (int i = 0; i < Main.lstAllShips_Player.size(); i++) {
 				for (int j = 0; j < Main.lstAllShips_Player.get(i).size(); j++) {
 					if (Main.lstAllShips_Player.get(i).get(j) == blk) {
 						Main.lstAllShips_Player.get(i).remove(j);
 						if (Main.lstAllShips_Player.get(i).size() == 0) {
 							blk.bf.intTotalShips--;
-							System.out.println("you have sunk a ship : Ships Left : " + blk.bf.intTotalShips);
+//							System.out.println("you have sunk a ship : Ships Left : " + blk.bf.intTotalShips);
 							return true;
 						}
 						break f1;
 					}
 				}
 			}
-			for (int i = 0; i < Main.lstAllShips_Player.size(); i++) {
-				System.out.print("-" + Main.lstAllShips_Player.get(i).size());
-			}
-			System.out.println();
+//			for (int i = 0; i < Main.lstAllShips_Player.size(); i++) {
+//				System.out.print("-" + Main.lstAllShips_Player.get(i).size());
+//			}
+//			System.out.println();
 		} else// computer
 		{
-			for (int i = 0; i < Main.lstAllShips_Computer.size(); i++) {
-				System.out.print("-" + Main.lstAllShips_Computer.get(i).size());
-			}
-			System.out.println();
+//			for (int i = 0; i < Main.lstAllShips_Computer.size(); i++) {
+//				System.out.print("-" + Main.lstAllShips_Computer.get(i).size());
+//			}
+//			System.out.println();
 			f1: for (int i = 0; i < Main.lstAllShips_Computer.size(); i++) {
 				for (int j = 0; j < Main.lstAllShips_Computer.get(i).size(); j++) {
 					if (Main.lstAllShips_Computer.get(i).get(j) == blk) {
 						Main.lstAllShips_Computer.get(i).remove(j);
 						if (Main.lstAllShips_Computer.get(i).size() == 0) {
 							blk.bf.intTotalShips--;
-							System.out.println("you have sunk a ship : Ships Left : " + blk.bf.intTotalShips);
+//							System.out.println("you have sunk a ship : Ships Left : " + blk.bf.intTotalShips);
 
 							return true;
 
@@ -365,10 +365,10 @@ public class Battlefield extends Parent {
 					}
 				}
 			}
-			for (int i = 0; i < Main.lstAllShips_Computer.size(); i++) {
-				System.out.print("-" + Main.lstAllShips_Computer.get(i).size());
-			}
-			System.out.println();
+//			for (int i = 0; i < Main.lstAllShips_Computer.size(); i++) {
+//				System.out.print("-" + Main.lstAllShips_Computer.get(i).size());
+//			}
+//			System.out.println();
 		}
 		return false;
 

@@ -37,7 +37,7 @@ public class Main extends Application {
 	private Battlefield bfComputer;
 	private Battlefield bfPlayer;
 	static List<Integer> lstShipSize = new ArrayList<>();
-	static int intTotalShips = 5;
+	static int INTTOTALSHIPS = 5;
 	static int intIndex = 0;
 
 	/**
@@ -87,11 +87,11 @@ public class Main extends Application {
 				return;
 			else {
 
-				System.out.println("*******your turn*******");
+//				System.out.println("*******your turn*******");
 				Battlefield.Block blk = (Battlefield.Block) event.getSource();
 				if (!Battlefield.isHit(blk))
 					return;
-				System.out.println("******Computer's turn******");
+//				System.out.println("******Computer's turn******");
 
 				while (true) {
 					int x = rand.nextInt(10);
@@ -111,11 +111,11 @@ public class Main extends Application {
 
 			if (bfPlayer.startPlaceShip(lstShipSize.get(intIndex), !(event.getButton() == MouseButton.PRIMARY), blk.y,
 					blk.x, true)) {
-				System.out.println("indexini" + intIndex);
+//				System.out.println("indexini" + intIndex);
 
 				intIndex++;
-				System.out.println("indexAfter" + intIndex);
-				if (--intTotalShips == 0) {
+//				System.out.println("indexAfter" + intIndex);
+				if (--INTTOTALSHIPS == 0) {
 					deployeComputerShips();
 				}
 			}
