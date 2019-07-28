@@ -3,9 +3,11 @@ package application.Models;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 
 import application.Controller.Main;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -36,7 +38,10 @@ import javafx.scene.shape.Rectangle;
  */
 public class Battlefield extends Parent {
 	private VBox vboxVert_X = new VBox();
+	private static int SCORE_ON_HIT = 50;
+	private static Stack<Block> stkBlockLastHit = new Stack<>();
 	int id;
+	public int intScore;
 	private int intTotalShips = 5;
 
 	/**
@@ -45,10 +50,11 @@ public class Battlefield extends Parent {
 	 * @param id      This is the id for each player
 	 * @param handler This is Mouse event handler
 	 */
-	public Battlefield(int id, EventHandler<? super MouseEvent> handler) {
+	public Battlefield(int id, int intScore, EventHandler<? super MouseEvent> handler) {
 		// TODO Auto-generated constructor stub
 //		this.enemy = enemy;
 		this.id = id;
+		this.intScore = intScore;
 		for (int i = 0; i < 10; i++) {
 			HBox hboxHor_Y = new HBox();
 			for (int j = 0; j < 10; j++) {
@@ -61,6 +67,12 @@ public class Battlefield extends Parent {
 		}
 
 		getChildren().add(vboxVert_X);
+	}
+
+	public Point2D getXY() {
+		Block blk = getBlock(0, 0);
+		Point2D pd = blk.localToScreen(0, 0);
+		return pd;
 	}
 
 	/**
@@ -228,7 +240,7 @@ public class Battlefield extends Parent {
 	 * 
 	 *         This Method checks the hit is misses or not
 	 */
-	public static boolean isHit(Block blk) {
+	synchronized public static boolean isHit(Block blk, Battlefield bfPlayer, Battlefield bfComputer) {
 		// TODO Auto-generated method stub
 		boolean boolNeedToShowAlert = false;
 		if (blk.occupiedFor == 'S') {
@@ -238,14 +250,22 @@ public class Battlefield extends Parent {
 			}
 			blk.setFill(Color.RED);
 			blk.occupiedFor = 'H';
+			if (blk.bf.id == 0)
+				bfPlayer.intScore += SCORE_ON_HIT;
+			else
+				bfComputer.intScore += SCORE_ON_HIT;
+			stkBlockLastHit.push(blk);
+			System.out.println("in isHit : your score:" + bfPlayer.intScore + "--comp score:" + bfComputer.intScore);
 			if (allShipsSunk(blk)) {
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Information Dialog");
 				alert.setHeaderText(null);
 				if (blk.bf.id == 0)
-					alert.setContentText("You won !!");
+					alert.setContentText("You won !!\nYour Score : " + bfPlayer.intScore + "\nComputer's Score : "
+							+ bfComputer.intScore);
 				else
-					alert.setContentText("Computer won !!");
+					alert.setContentText("Computer won !!\nYour Score : " + bfPlayer.intScore + "\nComputer's Score : "
+							+ bfComputer.intScore);
 
 				Optional<ButtonType> result = alert.showAndWait();
 				if (result.get() == ButtonType.OK) {
@@ -373,4 +393,11 @@ public class Battlefield extends Parent {
 		return false;
 
 	}
+
+//	private Block algorithmAIChooseBlock(Battlefield bfPlayer) {
+//		// TODO Auto-generated method stub
+//		Block blkSelected;
+//		Block blkLastHit=stkBlockLastHit.
+//		return blkSelected;
+//	}
 }

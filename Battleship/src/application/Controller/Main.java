@@ -1,5 +1,8 @@
 package application.Controller;
 
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +10,7 @@ import java.util.Random;
 
 import application.Models.Battlefield;
 import javafx.application.Application;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -24,8 +28,7 @@ import javafx.stage.Stage;
  *
  * @author dhvaniagola
  * @author Sahana
- * @author SAHIL
- * Branch2.1
+ * @author SAHIL Branch2.1
  * 
  *
  */
@@ -33,7 +36,10 @@ public class Main extends Application {
 //	static boolean running = false;// need to change var name
 	public static List<List<Battlefield.Block>> lstAllShips_Player = new ArrayList<>();
 	public static List<List<Battlefield.Block>> lstAllShips_Computer = new ArrayList<>();
+	public static int intPlayerStartTime = 0;
+	public static int intPlayerEndTime = 0;
 	private boolean boolIsGameStart = false;
+	private boolean boolIsComputerTurn = false;
 	private Battlefield bfComputer;
 	private Battlefield bfPlayer;
 	static List<Integer> lstShipSize = new ArrayList<>();
@@ -71,7 +77,10 @@ public class Main extends Application {
 	 * 
 	 */
 	private Parent prepareUI() {
+		int intNoOfTurns = 5;// set 5 for Salva variation
+		List<Battlefield.Block> lstSelectedBlocks = new ArrayList<>();
 		Random rand = new Random();
+//		long start,end;
 		BorderPane bpRoot = new BorderPane();
 		bpRoot.setPrefSize(700, 800);
 		Text txt1 = new Text(
@@ -82,30 +91,91 @@ public class Main extends Application {
 
 //		Scene scene = new Scene(label, 200, 100);
 
-		bfComputer = new Battlefield(0, event -> {
+		bfComputer = new Battlefield(0, 0, event -> {
+			System.out.println("bfcomputer thread start");
 			if (!boolIsGameStart)
 				return;
-			else {
+			else if (!boolIsComputerTurn) {
 
-//				System.out.println("*******your turn*******");
+				System.out.println("*******your turn*******");
+
 				Battlefield.Block blk = (Battlefield.Block) event.getSource();
-				if (!Battlefield.isHit(blk))
+				lstSelectedBlocks.add(blk);
+				if (lstSelectedBlocks.size() != intNoOfTurns)
 					return;
-//				System.out.println("******Computer's turn******");
+				System.out.println("selected...");
+				intPlayerEndTime = (int) System.currentTimeMillis();
+				int temp = 60 / ((intPlayerEndTime - intPlayerStartTime) / 1000);
+				bfPlayer.intScore += 60 / ((intPlayerEndTime - intPlayerStartTime) / 1000);
+				System.out.println("bfComputer thread : " + temp + ":your score:" + bfPlayer.intScore + "--comp score:"
+						+ bfComputer.intScore);
+				for (int i = 0; i < lstSelectedBlocks.size(); i++) {
+					Battlefield.isHit(lstSelectedBlocks.get(i), bfPlayer, bfComputer);
 
-				while (true) {
+				}
+				lstSelectedBlocks.clear();
+				boolIsComputerTurn = true;
+				System.out.println("waiting... going to clear list");
+
+				Point2D pd = bfPlayer.getXY();
+				System.out.println("coord:" + (int) pd.getX() + ":" + (int) pd.getY());
+
+				try {
+
+					Robot robot = new java.awt.Robot();
+
+					robot.mouseMove((int) pd.getX(), (int) pd.getY());
+					robot.mousePress(InputEvent.BUTTON1_MASK);
+					robot.mouseRelease(InputEvent.BUTTON1_MASK);
+//					robot.mouseMove((int) originalLocation.getX(), (int)originalLocation.getY());
+				} catch (AWTException e) {
+					e.printStackTrace();
+				}
+
+			} else
+				return;
+			System.out.println("waiting...");
+			long start = System.currentTimeMillis();
+//			Random rand=new Random();
+			while (System.currentTimeMillis() - start <= (10 * 1000)) {
+			}
+		});
+		System.out.println("129");
+		bfPlayer = new Battlefield(1, 0, event -> {
+			System.out.println("154" + boolIsComputerTurn);
+			System.out.println("oooooo....");
+			if (boolIsComputerTurn) {
+				System.out.println("******Computer's turn******");
+				long start = System.currentTimeMillis();
+//				Random rand=new Random();
+				int intRandDelay = rand.nextInt(5) + 1;
+				while (System.currentTimeMillis() - start <= (0 * 1000)) {
+				}
+				System.out.println("waiting2...");
+				bfComputer.intScore += 60 / intRandDelay;
+				System.out.println("bfPlayer Thread:" + intRandDelay + "your score:" + bfPlayer.intScore
+						+ "--comp score:" + bfComputer.intScore);
+//				while (true) {
+				for (int i = 0; i < intNoOfTurns; i++) {
+//					algorithmAIChooseBlock(bfPlayer);
 					int x = rand.nextInt(10);
 					int y = rand.nextInt(10);
 					Battlefield.Block blkBlock = bfPlayer.getBlock(x, y);
-					if (Battlefield.isHit(blkBlock))
-						break;
+					lstSelectedBlocks.add(blkBlock);
 				}
-			}
+				for (int i = 0; i < lstSelectedBlocks.size(); i++) {
+					Battlefield.isHit(lstSelectedBlocks.get(i), bfPlayer, bfComputer);
+//						if (Battlefield.isHit(lstSelectedBlocks.get(i)))
+//							break;
+				}
 
-		});
-		bfPlayer = new Battlefield(1, event -> {
-			if (boolIsGameStart)
+				lstSelectedBlocks.clear();
+				boolIsComputerTurn = false;
+				intPlayerStartTime = (int) System.currentTimeMillis();
+			}
+			if (boolIsGameStart) {
 				return;
+			}
 
 			Battlefield.Block blk = (Battlefield.Block) event.getSource();
 
@@ -119,7 +189,9 @@ public class Main extends Application {
 					deployeComputerShips();
 				}
 			}
+			System.out.println("Thread finish");
 		});
+		System.out.println("147");
 		VBox vbox = new VBox(10, bfComputer);
 		vbox.setAlignment(Pos.CENTER_LEFT);
 		bpRoot.setRight(vbox);
@@ -159,6 +231,7 @@ public class Main extends Application {
 
 		}
 		boolIsGameStart = true;
+		intPlayerStartTime = (int) System.currentTimeMillis();
 	}
 
 	public static void main(String[] args) {
