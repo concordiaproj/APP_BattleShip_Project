@@ -154,7 +154,7 @@ public class Battlefield extends Parent {
 //			System.out.println("hor");
 			if (x + intShipLength - 1 <= 9) {
 				for (int i = x; i < x + intShipLength; i++) {
-					
+					///
 					if (!isValidPoint(i, y))
 	                    return false;
 					Block blk = getBlock(i, y);
