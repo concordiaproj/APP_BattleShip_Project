@@ -154,24 +154,52 @@ public class Battlefield extends Parent {
 //			System.out.println("hor");
 			if (x + intShipLength - 1 <= 9) {
 				for (int i = x; i < x + intShipLength; i++) {
+					
+					if (!isValidPoint(i, y))
+	                    return false;
 					Block blk = getBlock(i, y);
 //					System.out.println(blk.bf.id + ":" + blk.occupiedFor);
 					if (blk.occupiedFor == 'S') {
 //						System.out.println("hor : found 'S'");
 						return false;
 					}
+					if(getNeighbors(i,y))
+					{
+						return true;
+					}
+					else
+						return false;
+
 				}
 			} else
 				return false;
-		} else {
+		} 
+		else {
 			if (y + intShipLength - 1 <= 9) {
 				for (int i = y; i < y + intShipLength; i++) {
+					
+					 if (!isValidPoint(x, i))
+		                    return false;
 					Block blk = getBlock(x, i);
+					
 //					System.out.println(blk.bf.id + ":" + blk.occupiedFor);
 					if (blk.occupiedFor == 'S') {
 //						System.out.println("ver");
 						return false;
 					}
+//					for (Block neighbor : getNeighbors(i, y)) {
+//	                    if (!isValidPoint(i, y))
+//	                        return false;
+//
+//	                    if (neighbor.ship != null)
+//	                        return false;
+//	                }
+					if(getNeighbors(x,i))
+					{
+						return true;
+					}
+					else
+						return false;
 //					System.out.println("i:" + i);
 				}
 			} else
@@ -193,7 +221,42 @@ public class Battlefield extends Parent {
 //		System.out.println("bf:" + this.id);
 		return (Block) ((HBox) vboxVert_X.getChildren().get(y)).getChildren().get(x);
 	}
+	private boolean getNeighbors(int x, int y) {
+//        Point2D[] points = new Point2D[] {
+//                new Point2D(x - 1, y),
+//                new Point2D(x + 1, y),
+//                new Point2D(x, y - 1),
+//                new Point2D(x, y + 1)
+//        };
+//
+        List<Block> neighbors = new ArrayList<Block>();
+        neighbors.add(getBlock(x-1, y));
+        neighbors.add(getBlock(x+1, y));
+        neighbors.add(getBlock(x, y-1));
+        neighbors.add(getBlock(x, y+1));
+        for(int i=0;i<neighbors.size();i++) {
+        	if(neighbors.get(i).occupiedFor=='S'){
+        		return false;
+        	}
+        }
+//
+//        for (Point2D p : points) {
+//            if (isValidPoint(p)) {
+//                neighbors.add(getBlock((int)p.getX(), (int)p.getY()));
+//            }
+//        }
+		
 
+        return true;
+    }
+
+	private boolean isValidPoint(Point2D point) {
+        return isValidPoint(point.getX(), point.getY());
+    }
+
+    private boolean isValidPoint(double x, double y) {
+        return x >= 0 && x < 10 && y >= 0 && y < 10;
+    }
 	/**
 	 * 
 	 * This class create objects for each block in both the grids
@@ -202,6 +265,7 @@ public class Battlefield extends Parent {
 	 *
 	 */
 	public class Block extends Rectangle {
+		public Object ship;
 		public int x;
 		public int y;
 		private Battlefield bf;
