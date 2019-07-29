@@ -181,7 +181,7 @@ public class Battlefield extends Parent {
 					 if (!isValidPoint(x, i))
 		                    return false;
 					Block blk = getBlock(x, i);
-					
+					//////
 //					System.out.println(blk.bf.id + ":" + blk.occupiedFor);
 					if (blk.occupiedFor == 'S') {
 //						System.out.println("ver");
