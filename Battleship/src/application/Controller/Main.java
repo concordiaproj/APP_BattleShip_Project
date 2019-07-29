@@ -54,7 +54,7 @@ public class Main extends Application {
 		try {
 			Scene scn = new Scene(prepareUI());
 			stageInit.setTitle("Battleship");
-
+///////
 			lstShipSize.add(2);
 			lstShipSize.add(3);
 			lstShipSize.add(3);
