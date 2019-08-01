@@ -40,6 +40,7 @@ public class Battlefield extends Parent {
 	private VBox vboxVert_X = new VBox();
 	private static int SCORE_ON_HIT = 50;
 	private static Stack<Block> stkBlockLastHit = new Stack<>();
+	public static Stack<Block> stkNeighbours = new Stack<>();
 	int id;
 	public int intScore;
 	private int intTotalShips = 5;
@@ -156,35 +157,29 @@ public class Battlefield extends Parent {
 				for (int i = x; i < x + intShipLength; i++) {
 					///
 					if (!isValidPoint(i, y))
-	                    return false;
+						return false;
 					Block blk = getBlock(i, y);
 //					System.out.println(blk.bf.id + ":" + blk.occupiedFor);
 					if (blk.occupiedFor == 'S') {
 //						System.out.println("hor : found 'S'");
 						return false;
 					}
-					if(getNeighbors(i,y))
-					{
+					if (getNeighbors(i, y)) {
 						return true;
-					}
-					else
+					} else
 						return false;
 
 				}
 			} else
 				return false;
-		} 
-		else {
+		} else {
 			if (y + intShipLength - 1 <= 9) {
 				for (int i = y; i < y + intShipLength; i++) {
-					
-					 if (!isValidPoint(x, i))
-		                    return false;
+
+					if (!isValidPoint(x, i))
+						return false;
 					Block blk = getBlock(x, i);
-					//////
-//					System.out.println(blk.bf.id + ":" + blk.occupiedFor);
 					if (blk.occupiedFor == 'S') {
-//						System.out.println("ver");
 						return false;
 					}
 //					for (Block neighbor : getNeighbors(i, y)) {
@@ -194,11 +189,9 @@ public class Battlefield extends Parent {
 //	                    if (neighbor.ship != null)
 //	                        return false;
 //	                }
-					if(getNeighbors(x,i))
-					{
+					if (getNeighbors(x, i)) {
 						return true;
-					}
-					else
+					} else
 						return false;
 //					System.out.println("i:" + i);
 				}
@@ -221,6 +214,7 @@ public class Battlefield extends Parent {
 //		System.out.println("bf:" + this.id);
 		return (Block) ((HBox) vboxVert_X.getChildren().get(y)).getChildren().get(x);
 	}
+
 	private boolean getNeighbors(int x, int y) {
 //        Point2D[] points = new Point2D[] {
 //                new Point2D(x - 1, y),
@@ -229,34 +223,32 @@ public class Battlefield extends Parent {
 //                new Point2D(x, y + 1)
 //        };
 //
-        List<Block> neighbors = new ArrayList<Block>();
-        neighbors.add(getBlock(x-1, y));
-        neighbors.add(getBlock(x+1, y));
-        neighbors.add(getBlock(x, y-1));
-        neighbors.add(getBlock(x, y+1));
-        for(int i=0;i<neighbors.size();i++) {
-        	if(neighbors.get(i).occupiedFor=='S'){
-        		return false;
-        	}
-        }
-//
-//        for (Point2D p : points) {
-//            if (isValidPoint(p)) {
-//                neighbors.add(getBlock((int)p.getX(), (int)p.getY()));
-//            }
-//        }
-		
+		System.out.println("x:" + x + ",y:" + y);
+		List<Block> neighbors = new ArrayList<Block>();
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				if (i != 0 || j != 0) {
+					if ((x + i) >= 0 && (x + i) < 10 && (y + j) >= 0 && (y + j) < 10) {
+						neighbors.add(getBlock(x + i, y + j));
+						System.out.println((x + i) + "," + (y + j));
+					}
+				}
+			}
+		}
+		for (int i = 0; i < neighbors.size(); i++) {
+			if (neighbors.get(i).occupiedFor == 'S') {
+				System.out.println("return : false");
+				return false;
+			}
+		}
+		System.out.println("return : true");
+		return true;
+	}
 
-        return true;
-    }
+	private boolean isValidPoint(double x, double y) {
+		return x >= 0 && x < 10 && y >= 0 && y < 10;
+	}
 
-	private boolean isValidPoint(Point2D point) {
-        return isValidPoint(point.getX(), point.getY());
-    }
-
-    private boolean isValidPoint(double x, double y) {
-        return x >= 0 && x < 10 && y >= 0 && y < 10;
-    }
 	/**
 	 * 
 	 * This class create objects for each block in both the grids
@@ -308,6 +300,7 @@ public class Battlefield extends Parent {
 		// TODO Auto-generated method stub
 		boolean boolNeedToShowAlert = false;
 		if (blk.occupiedFor == 'S') {
+			System.out.println("hit...");
 			if (removeFromList(blk)) {
 				boolNeedToShowAlert = true;
 
@@ -318,7 +311,11 @@ public class Battlefield extends Parent {
 				bfPlayer.intScore += SCORE_ON_HIT;
 			else
 				bfComputer.intScore += SCORE_ON_HIT;
-			stkBlockLastHit.push(blk);
+//			if (blk.bf.id == 1) {
+//				stkBlockLastHit.push(blk);
+////				addNeightboursInStack(blk);
+//				System.out.println("added in stack : (" + blk.x + "," + blk.y + ")");
+//			}
 			System.out.println("in isHit : your score:" + bfPlayer.intScore + "--comp score:" + bfComputer.intScore);
 			if (allShipsSunk(blk)) {
 				Alert alert = new Alert(AlertType.INFORMATION);
@@ -354,6 +351,7 @@ public class Battlefield extends Parent {
 			blk.setFill(Color.BLACK);
 			blk.occupiedFor = 'M';
 		} else {
+			System.out.println("hit on hit");
 			if (blk.bf.id == 0) {
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Information Dialog");
@@ -368,6 +366,38 @@ public class Battlefield extends Parent {
 			return false;
 		}
 		return true;
+	}
+
+	public void addNeightboursInStack(Block blk) {
+		// TODO Auto-generated method stub
+		int x = blk.x;
+		int y = blk.y;
+		if ((x - 1) >= 0 && (x - 1) < 10) {
+			if (getBlock(x - 1, y).occupiedFor == 'B' || getBlock(x - 1, y).occupiedFor == 'S') {
+				System.out.println("Added:" + (x - 1) + "," + y);
+				stkNeighbours.add(getBlock(x - 1, y));
+			}
+		}
+		if ((x + 1) >= 0 && (x + 1) < 10) {
+			if (getBlock(x + 1, y).occupiedFor == 'B' || getBlock(x + 1, y).occupiedFor == 'S') {
+				System.out.println("Added:" + (x + 1) + "," + y);
+				stkNeighbours.add(getBlock(x + 1, y));
+			}
+
+		}
+		if ((y - 1) >= 0 && (y - 1) < 10) {
+			if (getBlock(x, y - 1).occupiedFor == 'B' || getBlock(x, y - 1).occupiedFor == 'S') {
+				System.out.println("Added:" + x + "," + (y - 1));
+				stkNeighbours.add(getBlock(x, y - 1));
+			}
+		}
+		if ((y + 1) >= 0 && (y + 1) < 10) {
+			if (getBlock(x, y + 1).occupiedFor == 'B' || getBlock(x, y + 1).occupiedFor == 'S') {
+				System.out.println("Added:" + x + "," + (y + 1));
+				stkNeighbours.add(getBlock(x, y + 1));
+			}
+		}
+
 	}
 
 	/**
@@ -407,41 +437,27 @@ public class Battlefield extends Parent {
 		// TODO Auto-generated method stub
 		if (blk.bf.id == 1)// Player
 		{
-//			for (int i = 0; i < Main.lstAllShips_Player.size(); i++) {
-//				System.out.print("-" + Main.lstAllShips_Player.get(i).size());
-//			}
-//			System.out.println();
 			f1: for (int i = 0; i < Main.lstAllShips_Player.size(); i++) {
 				for (int j = 0; j < Main.lstAllShips_Player.get(i).size(); j++) {
 					if (Main.lstAllShips_Player.get(i).get(j) == blk) {
 						Main.lstAllShips_Player.get(i).remove(j);
 						if (Main.lstAllShips_Player.get(i).size() == 0) {
 							blk.bf.intTotalShips--;
-//							System.out.println("you have sunk a ship : Ships Left : " + blk.bf.intTotalShips);
 							return true;
 						}
 						break f1;
 					}
 				}
 			}
-//			for (int i = 0; i < Main.lstAllShips_Player.size(); i++) {
-//				System.out.print("-" + Main.lstAllShips_Player.get(i).size());
-//			}
-//			System.out.println();
 		} else// computer
 		{
-//			for (int i = 0; i < Main.lstAllShips_Computer.size(); i++) {
-//				System.out.print("-" + Main.lstAllShips_Computer.get(i).size());
-//			}
-//			System.out.println();
+//			
 			f1: for (int i = 0; i < Main.lstAllShips_Computer.size(); i++) {
 				for (int j = 0; j < Main.lstAllShips_Computer.get(i).size(); j++) {
 					if (Main.lstAllShips_Computer.get(i).get(j) == blk) {
 						Main.lstAllShips_Computer.get(i).remove(j);
 						if (Main.lstAllShips_Computer.get(i).size() == 0) {
 							blk.bf.intTotalShips--;
-//							System.out.println("you have sunk a ship : Ships Left : " + blk.bf.intTotalShips);
-
 							return true;
 
 						}
@@ -449,19 +465,51 @@ public class Battlefield extends Parent {
 					}
 				}
 			}
-//			for (int i = 0; i < Main.lstAllShips_Computer.size(); i++) {
-//				System.out.print("-" + Main.lstAllShips_Computer.get(i).size());
-//			}
-//			System.out.println();
 		}
 		return false;
 
 	}
 
-//	private Block algorithmAIChooseBlock(Battlefield bfPlayer) {
+//	public List<Block> algorithmAIChooseBlock(Battlefield bfPlayer) {
 //		// TODO Auto-generated method stub
 //		Block blkSelected;
-//		Block blkLastHit=stkBlockLastHit.
-//		return blkSelected;
+//		Random rand = new Random();
+//		System.out.println("stack size : " + stkBlockLastHit.size());
+//		if (stkBlockLastHit.size() > 0) {
+//			Block blkLastHit = stkBlockLastHit.lastElement();
+//
+//			System.out.println("block in stack : " + blkLastHit.occupiedFor + ": " + blkLastHit.x + "," + blkLastHit.y);
+//			int x = blkLastHit.x;
+//			int y = blkLastHit.y;
+//			List<Block> blkListTemp = new ArrayList<>();
+//			if (getBlock(x - 1, y).occupiedFor == 'B' || getBlock(x - 1, y).occupiedFor == 'S') {
+//				System.out.println("added:" + (x - 1) + "," + y);
+//				Block blk = getBlock(x - 1, y);
+//				blkListTemp.add(blk);
+//			}
+//			if (getBlock(x + 1, y).occupiedFor == 'B' || getBlock(x + 1, y).occupiedFor == 'S') {
+//				System.out.println("added:" + (x + 1) + "," + y);
+//				Block blk = getBlock(x + 1, y);
+//				blkListTemp.add(blk);
+//			}
+//			if (getBlock(x, y - 1).occupiedFor == 'B' || getBlock(x, y - 1).occupiedFor == 'S') {
+//				System.out.println("added:" + x + "," + (y - 1));
+//				Block blk = getBlock(x, y - 1);
+//				blkListTemp.add(blk);
+//			}
+//			if (getBlock(x, y + 1).occupiedFor == 'B' || getBlock(x, y + 1).occupiedFor == 'S') {
+//				System.out.println("added:" + x + "," + (y - 1));
+//				Block blk = getBlock(x, y + 1);
+//				blkListTemp.add(blk);
+//			}
+//			if (blkListTemp.size() == 0) {
+////				blkSelected = blkListTemp.get(rand.nextInt(blkListTemp.size()));
+//				stkBlockLastHit.pop();
+//
+//			}
+//			return blkListTemp;
+//		}
+//
+//		return null;
 //	}
 }

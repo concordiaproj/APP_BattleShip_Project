@@ -92,7 +92,7 @@ public class Main extends Application {
 //		Scene scene = new Scene(label, 200, 100);
 
 		bfComputer = new Battlefield(0, 0, event -> {
-			System.out.println("bfcomputer thread start");
+//			System.out.println("bfcomputer thread start");
 			if (!boolIsGameStart)
 				return;
 			else if (!boolIsComputerTurn) {
@@ -103,22 +103,22 @@ public class Main extends Application {
 				lstSelectedBlocks.add(blk);
 				if (lstSelectedBlocks.size() != intNoOfTurns)
 					return;
-				System.out.println("selected...");
+//				System.out.println("selected...");
 				intPlayerEndTime = (int) System.currentTimeMillis();
 				int temp = 60 / ((intPlayerEndTime - intPlayerStartTime) / 1000);
 				bfPlayer.intScore += 60 / ((intPlayerEndTime - intPlayerStartTime) / 1000);
-				System.out.println("bfComputer thread : " + temp + ":your score:" + bfPlayer.intScore + "--comp score:"
-						+ bfComputer.intScore);
+//				System.out.println("bfComputer thread : " + temp + ":your score:" + bfPlayer.intScore + "--comp score:"
+//						+ bfComputer.intScore);
 				for (int i = 0; i < lstSelectedBlocks.size(); i++) {
 					Battlefield.isHit(lstSelectedBlocks.get(i), bfPlayer, bfComputer);
 
 				}
 				lstSelectedBlocks.clear();
 				boolIsComputerTurn = true;
-				System.out.println("waiting... going to clear list");
+//				System.out.println("waiting... going to clear list");
 
 				Point2D pd = bfPlayer.getXY();
-				System.out.println("coord:" + (int) pd.getX() + ":" + (int) pd.getY());
+//				System.out.println("coord:" + (int) pd.getX() + ":" + (int) pd.getY());
 
 				try {
 
@@ -134,39 +134,49 @@ public class Main extends Application {
 
 			} else
 				return;
-			System.out.println("waiting...");
+//			System.out.println("waiting...");
 			long start = System.currentTimeMillis();
 //			Random rand=new Random();
-			while (System.currentTimeMillis() - start <= (10 * 1000)) {
-			}
+//			while (System.currentTimeMillis() - start <= (10 * 1000)) {
+//			}
 		});
-		System.out.println("129");
 		bfPlayer = new Battlefield(1, 0, event -> {
-			System.out.println("154" + boolIsComputerTurn);
-			System.out.println("oooooo....");
 			if (boolIsComputerTurn) {
 				System.out.println("******Computer's turn******");
 				long start = System.currentTimeMillis();
-//				Random rand=new Random();
 				int intRandDelay = rand.nextInt(5) + 1;
 				while (System.currentTimeMillis() - start <= (0 * 1000)) {
 				}
-				System.out.println("waiting2...");
 				bfComputer.intScore += 60 / intRandDelay;
-				System.out.println("bfPlayer Thread:" + intRandDelay + "your score:" + bfPlayer.intScore
-						+ "--comp score:" + bfComputer.intScore);
-//				while (true) {
-				for (int i = 0; i < intNoOfTurns; i++) {
-//					algorithmAIChooseBlock(bfPlayer);
-					int x = rand.nextInt(10);
-					int y = rand.nextInt(10);
-					Battlefield.Block blkBlock = bfPlayer.getBlock(x, y);
-					lstSelectedBlocks.add(blkBlock);
+				while (lstSelectedBlocks.size() < intNoOfTurns) {
+					int x, y;
+//					List<Battlefield.Block> blkListToHitByAI = bfPlayer.algorithmAIChooseBlock(bfPlayer);
+					if (Battlefield.stkNeighbours.size() > 0) {
+						System.out.println("AI**");
+						Battlefield.Block blkListToHitByAI = Battlefield.stkNeighbours.lastElement();
+						lstSelectedBlocks.add(blkListToHitByAI);
+						Battlefield.stkNeighbours.pop();
+					} else {
+						System.out.println("random**");
+						x = rand.nextInt(10);
+						y = rand.nextInt(10);
+						Battlefield.Block blkTemp = bfPlayer.getBlock(x, y);
+						if (blkTemp.occupiedFor == 'B' || blkTemp.occupiedFor == 'S') {
+							lstSelectedBlocks.add(blkTemp);
+						}
+					}
+
 				}
+				System.out.println("size of list : " + lstSelectedBlocks.size());
+
 				for (int i = 0; i < lstSelectedBlocks.size(); i++) {
-					Battlefield.isHit(lstSelectedBlocks.get(i), bfPlayer, bfComputer);
+					System.out.println("hitResult of (" + lstSelectedBlocks.get(i).x + "," + lstSelectedBlocks.get(i).y
+							+ ") :" + Battlefield.isHit(lstSelectedBlocks.get(i), bfPlayer, bfComputer));
 //						if (Battlefield.isHit(lstSelectedBlocks.get(i)))
 //							break;
+					if (lstSelectedBlocks.get(i).occupiedFor == 'H') {
+						bfPlayer.addNeightboursInStack(lstSelectedBlocks.get(i));
+					}
 				}
 
 				lstSelectedBlocks.clear();
@@ -189,9 +199,9 @@ public class Main extends Application {
 					deployeComputerShips();
 				}
 			}
-			System.out.println("Thread finish");
+//			System.out.println("Thread finish");
 		});
-		System.out.println("147");
+//		System.out.println("147");
 		VBox vbox = new VBox(10, bfComputer);
 		vbox.setAlignment(Pos.CENTER_LEFT);
 		bpRoot.setRight(vbox);
