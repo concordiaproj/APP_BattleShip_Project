@@ -46,6 +46,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage stageInit) {
 		try {
+//			 Parent root = FXMLLoader.load(getClass().getResource("UI.fxml"));
 			Scene scn = new Scene(prepareUI());
 			stageInit.setTitle("Battleship");
 
