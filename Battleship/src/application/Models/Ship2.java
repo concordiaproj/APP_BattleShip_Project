@@ -2,7 +2,11 @@ package application.Models;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * 
+ * @author SAHIL
+ * Getting Ship coordinate
+ */
 public class Ship2 {
 
 	int intSize;

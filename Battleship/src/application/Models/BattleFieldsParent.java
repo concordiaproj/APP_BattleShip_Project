@@ -5,7 +5,11 @@ import java.util.List;
 
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
-
+/**
+ * 
+ * @author SAHIL
+ *Main Parent class which has commen property for both computer and Player
+ */
 public abstract class BattleFieldsParent {
 
 	GridPane gridPane;

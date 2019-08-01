@@ -1,5 +1,9 @@
 package application.Models;
-
+/**
+ * 
+ * @author SAHIL
+ * Getting ship live location
+ */
 public class ShipLatestLocation {
 	public double intLocalX;
 	public double intLocalY;
