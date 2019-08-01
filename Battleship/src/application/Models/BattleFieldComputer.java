@@ -5,12 +5,17 @@ import java.util.List;
 import java.util.Random;
 
 import javafx.scene.layout.GridPane;
-
+/**
+ * 
+ * @author SAHIL
+ * Computer Battlefield 
+ * Adding ship randomly from computer side
+ */
 public class BattleFieldComputer extends BattleFieldsParent {
 
 	public BattleFieldComputer(GridPane gp) {
 		super(gp);
-		// TODO Auto-generated constructor stub
+		
 		this.id = 0;
 		for (int i = 0; i < 10; i++) {
 			ArrayList<Block> arrLstBlock = new ArrayList<>();

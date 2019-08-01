@@ -1,5 +1,9 @@
 package application.Models;
-
+/**
+ * 
+ * @author SAHIL
+ * getting update(Char) of block weather it is occupied or not
+ */
 public class Block {
 private char charOccupiedFor;
 private int x;
