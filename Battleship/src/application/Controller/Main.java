@@ -401,61 +401,9 @@ public class Main implements Initializable {
 						time = System.currentTimeMillis();
 					} else
 						return;
-
-//
-//                    bfComputer.guess(col, row, ai);
-
-//                    if(false) {//if (bfComputerParam.checkWin()) {
-//                        Alert winAlert = new Alert(AlertType.INFORMATION);
-//                        winAlert.setTitle("VICTORY");
-//                        winAlert.setHeaderText(null);
-//                        winAlert.setContentText("You Win!\nThanks for playing!");
-//                        winAlert.showAndWait();
-//                        System.exit(0);
-//                        reset();
-//                    } else {
-					// PC Takes turn
-					// Sleep so user thinks PC is 'thinking.' -- increased immersion
-//                        try {
-//                            TimeUnit.MILLISECONDS.sleep(200);
-//                        } catch (InterruptedException ex) {
-//                            Logger.getLogger(BattleshipController.class.getName()).log(Level.SEVERE, null, ex);
-////                        }
-//                        int x = ai.nextX();
-//                        int y = ai.nextY();
-
-					// A human wouldn't guess the same spot twice
-//                        while (bfPlayer.gameBoard.get(x).get(y).isPressed()) {
-//                            ai.generate();
-//                            x = ai.nextX();
-//                            y = ai.nextY();
-//                        }
-//                        bfPlayer.guess(x, y, ai);
-//                        if (bfPlayer.checkWin()) {
-//                            Alert loseAlert = new Alert(AlertType.INFORMATION);
-//                            loseAlert.setTitle("DEFEAT");
-//                            loseAlert.setHeaderText(null);
-//                            loseAlert.setContentText("You Lose.\nThanks for playing!");
-//                            loseAlert.showAndWait();
-//                            //reset();
-//                            System.exit(0);
-//                        }
-//                    }
 				}
 			});
 
-			rect.setOnMouseEntered(new EventHandler<MouseEvent>() {
-				public void handle(MouseEvent event) {
-//                    if (!bfComputer.gameBoard.get(GridPane.getColumnIndex(rect)).get(GridPane.getRowIndex(rect)).isPressed())
-//                        rect.setStrokeWidth(3.0);
-				}
-			});
-
-			rect.setOnMouseExited(new EventHandler<MouseEvent>() {
-				public void handle(MouseEvent event) {
-//                    rect.setStrokeWidth(0.5);
-				}
-			});
 		}
 	}
 
@@ -751,6 +699,7 @@ public class Main implements Initializable {
 			if (boolIsComputerTurn) {
 				Thread.sleep((rand.nextInt(5) + 1) * 1000);
 //				Thread.sleep(1000);
+			
 				bfComputer.intScore += (int) (60 / ((System.currentTimeMillis() - time) / 1000));
 				System.out.println("hi" + boolIsComputerTurn);
 				List<DataCoordinates> lstBlocksToBeSelect = bfPlayer.getFromAIAlgorithm(intNoOfTurns);
