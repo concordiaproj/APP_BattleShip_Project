@@ -36,7 +36,7 @@ import javafx.scene.shape.Rectangle;
  *         </ul>
  *
  */
-public class Battlefield extends Parent {
+public class BattleFieldsParent extends Parent {
 	private VBox vboxVert_X = new VBox();
 	private static int SCORE_ON_HIT = 50;
 	private static Stack<Block> stkBlockLastHit = new Stack<>();
@@ -51,7 +51,7 @@ public class Battlefield extends Parent {
 	 * @param id      This is the id for each player
 	 * @param handler This is Mouse event handler
 	 */
-	public Battlefield(int id, int intScore, EventHandler<? super MouseEvent> handler) {
+	public BattleFieldsParent(int id, int intScore, EventHandler<? super MouseEvent> handler) {
 		// TODO Auto-generated constructor stub
 //		this.enemy = enemy;
 		this.id = id;
@@ -260,7 +260,7 @@ public class Battlefield extends Parent {
 		public Object ship;
 		public int x;
 		public int y;
-		private Battlefield bf;
+		private BattleFieldsParent bf;
 		public char occupiedFor;
 
 		/**
@@ -272,7 +272,7 @@ public class Battlefield extends Parent {
 		 * 
 		 *                        It will set the color of the block initially
 		 */
-		public Block(Battlefield bf, int i, int j, char charOccupiedFor) {
+		public Block(BattleFieldsParent bf, int i, int j, char charOccupiedFor) {
 			// TODO Auto-generated constructor stub
 			super(30, 30);
 			this.x = i;
@@ -296,7 +296,7 @@ public class Battlefield extends Parent {
 	 * 
 	 *         This Method checks the hit is misses or not
 	 */
-	synchronized public static boolean isHit(Block blk, Battlefield bfPlayer, Battlefield bfComputer) {
+	synchronized public static boolean isHit(Block blk, BattleFieldsParent bfPlayer, BattleFieldsParent bfComputer) {
 		// TODO Auto-generated method stub
 		boolean boolNeedToShowAlert = false;
 		if (blk.occupiedFor == 'S') {

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import application.Models.Battlefield;
+import application.Models.BattleFieldsParent;
 import javafx.application.Application;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -34,14 +34,14 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 //	static boolean running = false;// need to change var name
-	public static List<List<Battlefield.Block>> lstAllShips_Player = new ArrayList<>();
-	public static List<List<Battlefield.Block>> lstAllShips_Computer = new ArrayList<>();
+	public static List<List<BattleFieldsParent.Block>> lstAllShips_Player = new ArrayList<>();
+	public static List<List<BattleFieldsParent.Block>> lstAllShips_Computer = new ArrayList<>();
 	public static int intPlayerStartTime = 0;
 	public static int intPlayerEndTime = 0;
 	private boolean boolIsGameStart = false;
 	private boolean boolIsComputerTurn = false;
-	private Battlefield bfComputer;
-	private Battlefield bfPlayer;
+	private BattleFieldsParent bfComputer;
+	private BattleFieldsParent bfPlayer;
 	static List<Integer> lstShipSize = new ArrayList<>();
 	static int INTTOTALSHIPS = 5;
 	static int intIndex = 0;
@@ -78,7 +78,7 @@ public class Main extends Application {
 	 */
 	private Parent prepareUI() {
 		int intNoOfTurns = 5;// set 5 for Salva variation
-		List<Battlefield.Block> lstSelectedBlocks = new ArrayList<>();
+		List<BattleFieldsParent.Block> lstSelectedBlocks = new ArrayList<>();
 		Random rand = new Random();
 //		long start,end;
 		BorderPane bpRoot = new BorderPane();
@@ -91,7 +91,7 @@ public class Main extends Application {
 
 //		Scene scene = new Scene(label, 200, 100);
 
-		bfComputer = new Battlefield(0, 0, event -> {
+		bfComputer = new BattleFieldsParent(0, 0, event -> {
 //			System.out.println("bfcomputer thread start");
 			if (!boolIsGameStart)
 				return;
@@ -99,7 +99,7 @@ public class Main extends Application {
 
 				System.out.println("*******your turn*******");
 
-				Battlefield.Block blk = (Battlefield.Block) event.getSource();
+				BattleFieldsParent.Block blk = (BattleFieldsParent.Block) event.getSource();
 				lstSelectedBlocks.add(blk);
 				if (lstSelectedBlocks.size() != intNoOfTurns)
 					return;
@@ -110,7 +110,7 @@ public class Main extends Application {
 //				System.out.println("bfComputer thread : " + temp + ":your score:" + bfPlayer.intScore + "--comp score:"
 //						+ bfComputer.intScore);
 				for (int i = 0; i < lstSelectedBlocks.size(); i++) {
-					Battlefield.isHit(lstSelectedBlocks.get(i), bfPlayer, bfComputer);
+					BattleFieldsParent.isHit(lstSelectedBlocks.get(i), bfPlayer, bfComputer);
 
 				}
 				lstSelectedBlocks.clear();
@@ -140,7 +140,7 @@ public class Main extends Application {
 //			while (System.currentTimeMillis() - start <= (10 * 1000)) {
 //			}
 		});
-		bfPlayer = new Battlefield(1, 0, event -> {
+		bfPlayer = new BattleFieldsParent(1, 0, event -> {
 			if (boolIsComputerTurn) {
 				System.out.println("******Computer's turn******");
 				long start = System.currentTimeMillis();
@@ -151,16 +151,16 @@ public class Main extends Application {
 				while (lstSelectedBlocks.size() < intNoOfTurns) {
 					int x, y;
 //					List<Battlefield.Block> blkListToHitByAI = bfPlayer.algorithmAIChooseBlock(bfPlayer);
-					if (Battlefield.stkNeighbours.size() > 0) {
+					if (BattleFieldsParent.stkNeighbours.size() > 0) {
 						System.out.println("AI**");
-						Battlefield.Block blkListToHitByAI = Battlefield.stkNeighbours.lastElement();
+						BattleFieldsParent.Block blkListToHitByAI = BattleFieldsParent.stkNeighbours.lastElement();
 						lstSelectedBlocks.add(blkListToHitByAI);
-						Battlefield.stkNeighbours.pop();
+						BattleFieldsParent.stkNeighbours.pop();
 					} else {
 						System.out.println("random**");
 						x = rand.nextInt(10);
 						y = rand.nextInt(10);
-						Battlefield.Block blkTemp = bfPlayer.getBlock(x, y);
+						BattleFieldsParent.Block blkTemp = bfPlayer.getBlock(x, y);
 						if (blkTemp.occupiedFor == 'B' || blkTemp.occupiedFor == 'S') {
 							lstSelectedBlocks.add(blkTemp);
 						}
@@ -171,7 +171,7 @@ public class Main extends Application {
 
 				for (int i = 0; i < lstSelectedBlocks.size(); i++) {
 					System.out.println("hitResult of (" + lstSelectedBlocks.get(i).x + "," + lstSelectedBlocks.get(i).y
-							+ ") :" + Battlefield.isHit(lstSelectedBlocks.get(i), bfPlayer, bfComputer));
+							+ ") :" + BattleFieldsParent.isHit(lstSelectedBlocks.get(i), bfPlayer, bfComputer));
 //						if (Battlefield.isHit(lstSelectedBlocks.get(i)))
 //							break;
 					if (lstSelectedBlocks.get(i).occupiedFor == 'H') {
@@ -187,7 +187,7 @@ public class Main extends Application {
 				return;
 			}
 
-			Battlefield.Block blk = (Battlefield.Block) event.getSource();
+			BattleFieldsParent.Block blk = (BattleFieldsParent.Block) event.getSource();
 
 			if (bfPlayer.startPlaceShip(lstShipSize.get(intIndex), !(event.getButton() == MouseButton.PRIMARY), blk.y,
 					blk.x, true)) {

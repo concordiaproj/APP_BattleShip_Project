@@ -10,7 +10,7 @@ import javafx.scene.shape.Rectangle;
 public class Block extends Rectangle {
 	int x;
 	int y;
-	Battlefield bf;
+	BattleFieldsParent bf;
 
 	/**
 	 * 
@@ -19,7 +19,7 @@ public class Block extends Rectangle {
 	 * @param j  y-coordinate of a block It sets (x,y) coordinates of a block with
 	 *           associated color.
 	 */
-	public Block(Battlefield bf, int i, int j) {
+	public Block(BattleFieldsParent bf, int i, int j) {
 		// TODO Auto-generated constructor stub
 		super(50, 50);
 		this.x = i;
