@@ -114,4 +114,24 @@ public abstract class BattleFieldsParent {
 		}
 		return false;
 	}
+	
+	
+	
+	public void isShipValidPlace(int intX, int intY)
+	{for (int i = 0; i < this.lstShip.size(); i++) {
+		for (int k = 0; k < this.lstShip.get(i).lstShipCoord.size(); k++) {
+			if (this.lstShip.get(i).lstShipCoord.get(k).x == intX
+					&& this.lstShip.get(i).lstShipCoord.get(k).y == intY) {
+				this.lstShip.get(i).lstShipCoord.remove(k);
+				if (this.lstShip.get(i).lstShipCoord.size() == 0) {
+					this.lstShip.get(i).setBoolIsHit(true);
+					
+				} 
+					
+			}
+		}
+	}
+	
+		
+	}
 }
