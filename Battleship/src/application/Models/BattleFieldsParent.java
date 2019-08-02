@@ -25,16 +25,16 @@ import javafx.scene.shape.Rectangle;
  * 
  * 
  * 
- *         This class Manage all actions done on battlefields of both the
+ *         This class Manage all actions done on BattleFieldsParents of both the
  *         players.
  *         <ul>
- *         <li>Ship placing on both battlefields with validations</li>
+ *         <li>Ship placing on both BattleFieldsParents with validations</li>
  *         <li>Manage all hits done by both the players</li>
  *         <li>Displaying all informative messages</li>
  *         </ul>
  *
  */
-public class Battlefield extends Parent {
+public class BattleFieldsParent extends Parent {
 	private VBox vboxVert_X = new VBox();
 	int id;
 	private int intTotalShips = 5;
@@ -45,7 +45,7 @@ public class Battlefield extends Parent {
 	 * @param id      This is the id for each player
 	 * @param handler This is Mouse event handler
 	 */
-	public Battlefield(int id, EventHandler<? super MouseEvent> handler) {
+	public BattleFieldsParent(int id, EventHandler<? super MouseEvent> handler) {
 		// TODO Auto-generated constructor stub
 //		this.enemy = enemy;
 		this.id = id;
@@ -192,19 +192,19 @@ public class Battlefield extends Parent {
 	public class Block extends Rectangle {
 		public int x;
 		public int y;
-		private Battlefield bf;
+		private BattleFieldsParent bf;
 		public char occupiedFor;
 
 		/**
 		 * 
-		 * @param bf              BattleField object which define the player
+		 * @param bf              BattleFieldsParent object which define the player
 		 * @param i               x-coordinate of a block
 		 * @param j               y-coordinate of a block
 		 * @param charOccupiedFor which shows that block is blank, hit or missed
 		 * 
 		 *                        It will set the color of the block initially
 		 */
-		public Block(Battlefield bf, int i, int j, char charOccupiedFor) {
+		public Block(BattleFieldsParent bf, int i, int j, char charOccupiedFor) {
 			// TODO Auto-generated constructor stub
 			super(30, 30);
 			this.x = i;

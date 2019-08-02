@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import application.Models.Battlefield;
+import application.Models.BattleFieldsParent;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -31,11 +31,11 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 //	static boolean running = false;// need to change var name
-	public static List<List<Battlefield.Block>> lstAllShips_Player = new ArrayList<>();
-	public static List<List<Battlefield.Block>> lstAllShips_Computer = new ArrayList<>();
+	public static List<List<BattleFieldsParent.Block>> lstAllShips_Player = new ArrayList<>();
+	public static List<List<BattleFieldsParent.Block>> lstAllShips_Computer = new ArrayList<>();
 	private boolean boolIsGameStart = false;
-	private Battlefield bfComputer;
-	private Battlefield bfPlayer;
+	private BattleFieldsParent bfComputer;
+	private BattleFieldsParent bfPlayer;
 	static List<Integer> lstShipSize = new ArrayList<>();
 	static int INTTOTALSHIPS = 5;
 	static int intIndex = 0;
@@ -75,39 +75,39 @@ public class Main extends Application {
 		BorderPane bpRoot = new BorderPane();
 		bpRoot.setPrefSize(700, 800);
 		Text txt1 = new Text(
-				"Left Battlefield is yours\nRight Battlefield is opponents\nYellow Color : Ships on your battlefield\nRed Color : Successfully hit on the ship\nBlack Color : Missed the hit\n\nINSTRUCTION : \n => Do 'LEFT CLICK' to put a ship 'VERTICAL'\n => Do 'RIGHT CLICK' to put a ship 'HORIZONTAL'\n => You can put ships in this order of it's length : 2, 3, 3, 4, 5");
+				"Left BattleFieldsParent is yours\nRight BattleFieldsParent is opponents\nYellow Color : Ships on your BattleFieldsParent\nRed Color : Successfully hit on the ship\nBlack Color : Missed the hit\n\nINSTRUCTION : \n => Do 'LEFT CLICK' to put a ship 'VERTICAL'\n => Do 'RIGHT CLICK' to put a ship 'HORIZONTAL'\n => You can put ships in this order of it's length : 2, 3, 3, 4, 5");
 		txt1.setTextAlignment(TextAlignment.LEFT);
 		bpRoot.setTop(txt1);
 //		Label label = new Label("My Label");
 
 //		Scene scene = new Scene(label, 200, 100);
 
-		bfComputer = new Battlefield(0, event -> {
+		bfComputer = new BattleFieldsParent(0, event -> {
 			if (!boolIsGameStart)
 				return;
 			else {
 
 //				System.out.println("*******your turn*******");
-				Battlefield.Block blk = (Battlefield.Block) event.getSource();
-				if (!Battlefield.isHit(blk))
+				BattleFieldsParent.Block blk = (BattleFieldsParent.Block) event.getSource();
+				if (!BattleFieldsParent.isHit(blk))
 					return;
 //				System.out.println("******Computer's turn******");
 
 				while (true) {
 					int x = rand.nextInt(10);
 					int y = rand.nextInt(10);
-					Battlefield.Block blkBlock = bfPlayer.getBlock(x, y);
-					if (Battlefield.isHit(blkBlock))
+					BattleFieldsParent.Block blkBlock = bfPlayer.getBlock(x, y);
+					if (BattleFieldsParent.isHit(blkBlock))
 						break;
 				}
 			}
 
 		});
-		bfPlayer = new Battlefield(1, event -> {
+		bfPlayer = new BattleFieldsParent(1, event -> {
 			if (boolIsGameStart)
 				return;
 
-			Battlefield.Block blk = (Battlefield.Block) event.getSource();
+			BattleFieldsParent.Block blk = (BattleFieldsParent.Block) event.getSource();
 
 			if (bfPlayer.startPlaceShip(lstShipSize.get(intIndex), !(event.getButton() == MouseButton.PRIMARY), blk.y,
 					blk.x, true)) {
@@ -131,7 +131,7 @@ public class Main extends Application {
 	}
 
 	/**
-	 * this method deploying the ships on computer's battlefield using random
+	 * this method deploying the ships on computer's BattleFieldsParent using random
 	 * selection
 	 * 
 	 */
