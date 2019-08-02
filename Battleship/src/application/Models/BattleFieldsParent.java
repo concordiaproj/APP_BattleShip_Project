@@ -39,17 +39,9 @@ public abstract class BattleFieldsParent {
 
 	public void addShip(Ship2 ship, boolean isRotated) {
 
-		// Do NOT add ship if it's not valid. (only applies to player game board)
-//        if (id == 1) {
-//            if (!this.isValidToPlace(ship.getSX(), ship.getSY(), ship.getSizeOfShip(), isRotated)) {
-//                return;
-//            }
-//        }
+		
 		for (int x = ship.getSX(); x <= ship.getEX(); x++) {
-			for (int y = ship.getSY(); y <= ship.getEY(); y++) {
-//                Ship2 oldShip = this.gameBoard.get(x).get(y).getShip();
-//                this.gameBoard.get(x).get(y).setShip(ship);
-			}
+			for (int y = ship.getSY(); y <= ship.getEY(); y++) {		}
 		}
 		if (ship.intStartX == ship.intEndX) {
 			for (int i = Math.min(ship.intStartY, ship.intEndY); i <= Math.max(ship.intStartY, ship.intEndY); i++) {
@@ -104,13 +96,14 @@ public abstract class BattleFieldsParent {
 		return true;
 	}
 
+	//Code for Ship sunk
 	public boolean isShipDestroyed(int intX, int intY) {
 		// TODO Auto-generated method stub
 		for (int i = 0; i < this.lstShip.size(); i++) {
-			for (int j = 0; j < this.lstShip.get(i).lstShipCoord.size(); j++) {
-				if (this.lstShip.get(i).lstShipCoord.get(j).x == intX
-						&& this.lstShip.get(i).lstShipCoord.get(j).y == intY) {
-					this.lstShip.get(i).lstShipCoord.remove(j);
+			for (int k = 0; k < this.lstShip.get(i).lstShipCoord.size(); k++) {
+				if (this.lstShip.get(i).lstShipCoord.get(k).x == intX
+						&& this.lstShip.get(i).lstShipCoord.get(k).y == intY) {
+					this.lstShip.get(i).lstShipCoord.remove(k);
 					if (this.lstShip.get(i).lstShipCoord.size() == 0) {
 						this.lstShip.get(i).setBoolIsHit(true);
 						return true;
