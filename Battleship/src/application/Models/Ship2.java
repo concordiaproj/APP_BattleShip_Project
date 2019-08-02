@@ -46,7 +46,7 @@ public class Ship2 {
 	public void setBoolIsHit(boolean boolIsHit) {
 		this.boolIsHit = boolIsHit;
 	}
-	
+	// Ship Co-ordation Method
 	 public void setShipCoord() {
 			// TODO Auto-generated method stub
 	    	int x=this.getSX();
