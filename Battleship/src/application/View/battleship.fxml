@@ -286,7 +286,7 @@
          </toggleGroup>
       </RadioButton>
       <RadioButton fx:id="rbSalva" layoutX="50.0" layoutY="103.0" mnemonicParsing="false" text="Salva variation" toggleGroup="$gameSelection" />
-      <TextArea layoutX="536.0" layoutY="55.0" prefHeight="18.0" prefWidth="200.0" />
+      
       <Text layoutX="536.0" layoutY="153.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Computer's Board" />
       <Text layoutX="536.0" layoutY="465.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player's Board" />
     </children>
