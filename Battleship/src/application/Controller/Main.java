@@ -516,14 +516,9 @@ public class Main implements Initializable {
 	}
 
 	private void makeReadyComputerToPlay() throws InterruptedException {
-		// TODO Auto-generated method stub
+		
 		System.out.println("in ready computer" + boolIsComputerTurn);
-//		for(Node n:gpPlayer.getChildren()) {
-//			if(GridPane.getColumnIndex(n)==0 && GridPane.getRowIndex(n)==0 ) {
-//				Rectangle r=(Rectangle)n;
-//				r.setFill(Color.PINK);
-//			}
-//		}
+
 		int x, y;
 		Random rand = new Random();
 		int q = 1;
@@ -533,13 +528,7 @@ public class Main implements Initializable {
 				System.out.println("computer tuen");
 			else
 				System.out.println("your turn");
-//			while(!boolIsComputerTurn) {
-////				System.out.println("in while : "+boolIsComputerTurn);
-//				if(q==2) {
-//					System.out.println("hello");
-//				}
-//			}
-//			wait
+
 
 			if (boolIsComputerTurn) {
 				Thread.sleep((rand.nextInt(5) + 1) * 1000);
