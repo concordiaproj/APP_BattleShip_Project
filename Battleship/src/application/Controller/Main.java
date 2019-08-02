@@ -34,7 +34,6 @@ import javafx.scene.shape.Rectangle;
 /**
  * FXML Controller class
  *
- * @author pg3f4
  */
 public class Main implements Initializable {
 	BattleFieldPlayer bfPlayer;
@@ -79,16 +78,11 @@ public class Main implements Initializable {
 	/**
 	 * Initializes the controller class.
 	 *
-	 * @param url
-	 * @param rb
+	
 	 */
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-//        Alert startAlert = new Alert(AlertType.INFORMATION);
-//        startAlert.setTitle("Welcome");
-//        startAlert.setHeaderText(null);
-//        startAlert.setContentText("Welcome to Battleship\nPlease start by placing your ships on the BOTTOM board.\n(Click to rotate, drag to place)");
-//        startAlert.showAndWait();
+
 		bfPlayer = new BattleFieldPlayer(gpPlayer);
 		bfComputer = new BattleFieldComputer(gpComputer);
 		reset();
@@ -102,9 +96,6 @@ public class Main implements Initializable {
 
 		selectedShip = ship1;
 
-		// (re) initialize the display boards
-//        bfComputer.initGrid();
-//        bfPlayer.initGrid();
 		installPlayerBoardListeners(bfPlayer);
 
 		// Set-up boats, place them in the right spot
@@ -211,12 +202,7 @@ public class Main implements Initializable {
 
 				if (isRotated) {
 					boat.setLayoutX(mouseEvent.getSceneX() - (boat.getBoundsInLocal().getWidth() / 2));
-					boat.setLayoutY(mouseEvent.getSceneY() + (boat.getBoundsInLocal().getWidth() / 3)); // Not sure how
-																										// much sense
-																										// the math
-																										// makes here,
-																										// but it works
-																										// right.
+					boat.setLayoutY(mouseEvent.getSceneY() + (boat.getBoundsInLocal().getWidth() / 3)); 
 				} else {
 					boat.setLayoutX(mouseEvent.getSceneX());
 					boat.setLayoutY(mouseEvent.getSceneY());
@@ -226,84 +212,25 @@ public class Main implements Initializable {
 		boat.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
-//                boat.setCursor(Cursor.HAND);
+
 			}
 		});
 		boat.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent mouseEvent) {
-//            	Node n=(Node)boat;
-//            	System.out.println("Do Rotate"+Grid);
+
 				int x, y;
 				double localX, localY;
 				boolean isRotated;
 				if (needToRotate) {
-					// boat.setLayoutX(mouseEvent.getSceneX());
-					// boat.setLayoutY(mouseEvent.getSceneY());
+					 
 					if (boat.rotateProperty().getValue() == 0) {
 						boat.setRotate(90.0);
 					} else
 						boat.setRotate(0);
 				}
-//
-//				for (Node n : mapShipLocation.keySet()) {
-//
-//					if (n.getId().equalsIgnoreCase(boat.getId())) {
-////						if (mapShipLocation.get(n).size % 2 == 0) {
-////							System.out.println("hello--");
-////							startButton.disableProperty().set(true);
-////							System.out.println("bye--");
-////							break;
-////						} else {
-//
-//						localX = mapShipLocation.get(n).intLocalX;
-//						localY = mapShipLocation.get(n).intLocalY;
-//						isRotated = mapShipLocation.get(n).boolIsRotated;
-//						x = (int) (localX / cellSize);
-//						y = (int) (localY / cellSize);
-//						if (isRotated) {
-//							if (mapShipLocation.get(n).size == 1) {
-//								x = x;
-//								y = y;
-//							}
-//							if (mapShipLocation.get(n).size == 3) {
-//								x = x + 1;
-//								y = y - 1;
-//							}
-//							if (mapShipLocation.get(n).size == 5) {
-//								x = x + 2;
-//								y = y - 2;
-//							}
-//						} else {
-//							if (mapShipLocation.get(n).size == 1) {
-//								x = x;
-//								y = y;
-//							}
-//							if (mapShipLocation.get(n).size == 3) {
-//								x = x - 1;
-//								y = y + 1;
-//							}
-//							if (mapShipLocation.get(n).size == 5) {
-//								x = x - 2;
-//								y = y + 2;
-//							}
-//						}
-//						localX = x * cellSize;
-//						localY = y * cellSize;
-//						ShipLatestLocation sll = new ShipLatestLocation(localX, localY, mapShipLocation.get(n).size,
-//								!isRotated);
-//						mapShipLocation.put(n, sll);
-//
-////						}
-//						break;
-//					}
-//				}
-//				if (bfPlayer.allValidPositions(mapShipLocation))
-//					startButton.disableProperty().set(false);
-//				else
-//					startButton.disableProperty().set(true);
-
+// 
 			}
 
 		});
@@ -458,33 +385,7 @@ public class Main implements Initializable {
 								endY = y;
 							}
 
-//                            Ship2 ship = new Ship2(size, x, y, endX, endY);
-//                            bfPlayerParam.addShip(ship, isRotated);
-//
-//
-//                            Paint col;
-//                            System.out.println("x,y:"+x+","+y);
-//                            Node rect=bfPlayerParam.getBlockNode(x, y);
-//                            System.out.println("rect x,y:"+isRotated);
-//                            if (bfPlayerParam.isValidToPlace(x, y, size, isRotated)) {
-//                                col = Color.GREEN;
-//                                bfPlayer.lstShip.add(ship);
-////                                ship.setIsSet(true);
-//                                if (bfPlayer.lstShip.size() == 5)
-//                                    startButton.disableProperty().set(false);
-//
-//                                for (int i = 0; i < size && i < 9; i++) {
-//                                    if (!isRotated) {
-//                                        if (y + i <= 9)
-//                                            r = (Rectangle) bfPlayer.getBlockNode(x, y + i);
-//
-//                                    } else {
-//                                        if (x + i <= 9)
-//                                            r = (Rectangle) bfPlayer.getBlockNode(x + i, y);
-//                                    }
-//                                    r.setFill(col);
-//                                }
-//                            }
+//                          
 
 						}
 
@@ -497,19 +398,7 @@ public class Main implements Initializable {
 		});
 	}
 
-	/**
-	 * Displays information about the application
-	 *
-	 * @param event the action of pressing the button
-	 */
-	@FXML
-	private void showAbout(ActionEvent event) {
-		Alert aboutAlert = new Alert(AlertType.INFORMATION);
-		aboutAlert.setTitle("About");
-		aboutAlert.setHeaderText(null);
-		aboutAlert.setContentText("Battleship Clone\nAuthor: Philip Gilbreth (pg3f4)\nCreated: April 2015");
-		aboutAlert.showAndWait();
-	}
+
 
 	/**
 	 * Highlights a boat
@@ -590,12 +479,7 @@ public class Main implements Initializable {
 			intNoOfTurns = 5;
 		}
 		System.out.println("boolsalva : " + boolIsSalvaVariation);
-//        Alert startAlert = new Alert(AlertType.INFORMATION);
-//        startAlert.setTitle("Starting. . .");
-//        startAlert.setHeaderText(null);
-//        startAlert.setContentText("Good job!\nYou go first!\nSelect the spot on the top board you wish to guess.");
-//        Optional<ButtonType> result = startAlert.showAndWait();
-//        if (result.get() == ButtonType.OK) {
+     
 
 		for (Node node : anchor.getChildren()) {
 			node.setOnMouseClicked(null);
@@ -627,46 +511,7 @@ public class Main implements Initializable {
 
 		startButton.disableProperty().set(true);
 
-//		}
-//
-//        //Deselect boat
-//        select(null);
 
-		// Change color of all spaces in player Display board to black
-//        for (int x = 0; x <= 9; x++) {
-//            for (int y = 0; y <= 9; y++) {
-//                ((Rectangle) bfPlayer.getBlockNode(x, y)).setFill(Color.BLACK);
-//            }
-//        }
-
-		// Remove all listeners so we can't interact with player display board or boats
-//        for (Node node : anchor.getChildren()) {
-//            node.setOnMouseClicked(null);
-//            node.setOnMouseDragged(null);
-//            node.setOnMouseReleased(null);
-//            node.setOnMousePressed(null);
-//            node.setOnMouseEntered(null);
-//        }
-//        anchor.setOnMouseReleased(null);
-//        anchor.setOnMouseDragged(null);
-//        System.out.println("====Final Ships====");
-//        for(int i=0;i<10;i++) {
-//        	for(int j=0;j<10;j++) {
-//        		System.out.print(bfPlayer.gameBoard.get(i).get(j).getCharOccupiedFor());
-//        	}
-//        	System.out.println();
-//        }
-//        for(int i=0;i<bfPlayer.lstShip.size();i++) {
-//        	System.out.println("("+bfPlayer.lstShip.get(i).intStartX+","+bfPlayer.lstShip.get(i).intStartY+")("+bfPlayer.lstShip.get(i).intEndX+","+bfPlayer.lstShip.get(i).intEndY+")");
-//        }
-
-		// Get PC grid ready
-//        bfComputer.initGrid();
-//        bfComputer.deployComputerShips();
-//        System.out.println("computer ships deployed");
-//        installPCBoardListeners(bfComputer);
-//        makeReadyComputerToPlay();
-//        startButton.disableProperty().set(true);
 
 	}
 
