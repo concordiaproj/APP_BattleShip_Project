@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package application.Models;
 
 import javafx.application.Application;
@@ -7,16 +12,24 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * @author pg3f4
+ * 
+ * @author dhvaniagola
+ *
  */
 public class Battleship extends Application {
+
 	/**
-	 * @param args the command line arguments
+	 * 
+	 * @param args
 	 */
 	public static void main(String[] args) {
 		launch(args);
 	}
 
+	/**
+	 * @param stage
+	 * @throws Exception
+	 */
 	@Override
 	public void start(Stage stage) throws Exception {
 		Parent root = FXMLLoader.load(getClass().getResource("/application/View/battleship.fxml"));
@@ -26,5 +39,7 @@ public class Battleship extends Application {
 		stage.setTitle("Battleship");
 		stage.setResizable(false);
 		stage.show();
+
 	}
+
 }
