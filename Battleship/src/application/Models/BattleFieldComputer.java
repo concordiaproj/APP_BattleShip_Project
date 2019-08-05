@@ -6,8 +6,18 @@ import java.util.Random;
 
 import javafx.scene.layout.GridPane;
 
+/**
+ * 
+ * @author dhvaniagola
+ * @author arunipatel
+ * @author SAHIL
+ *///
 public class BattleFieldComputer extends BattleFieldsParent {
-
+	/**
+	 * This constructor will set the initial value of each block of the grid.
+	 * 
+	 * @param gp Gridpane of Computer
+	 */
 	public BattleFieldComputer(GridPane gp) {
 		super(gp);
 		// TODO Auto-generated constructor stub
@@ -22,6 +32,9 @@ public class BattleFieldComputer extends BattleFieldsParent {
 		}
 	}
 
+	/**
+	 * This Method will deploy computer's ships on it's grid
+	 */
 	public void deployComputerShips() {
 		List<Integer> lstShipSize = new ArrayList<>();
 		Random rand = new Random();
