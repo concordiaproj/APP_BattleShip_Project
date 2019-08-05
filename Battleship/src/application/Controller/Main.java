@@ -277,13 +277,13 @@ public class Main implements Initializable {
 
 							int intY = GridPane.getColumnIndex(lstNodeToSelect.get(i));// y
 							int intX = GridPane.getRowIndex(lstNodeToSelect.get(i));// x
-//							if (bfComputer.isHit(intX, intY, boolIsSalvaVariation, lstNodeToSelect.get(i), i)) {
-//								taShipCntComputer.clear();
-//								taShipCntComputer.setText(bfComputer.intTotalAliveShips + "");
-//								taPlayerScore.clear();
-//								taPlayerScore.setText(bfPlayer.intScore + "");
-//								return;
-//							}
+							if (bfComputer.isHit(intX, intY, boolIsSalvaVariation, lstNodeToSelect.get(i), i)) {
+								taShipCntComputer.clear();
+								taShipCntComputer.setText(bfComputer.intTotalAliveShips + "");
+								taPlayerScore.clear();
+								taPlayerScore.setText(bfPlayer.intScore + "");
+								return;
+							}
 
 							taShipCntComputer.clear();
 							taShipCntComputer.setText(bfComputer.intTotalAliveShips + "");
@@ -485,21 +485,21 @@ public class Main implements Initializable {
 					Rectangle r = (Rectangle) bfPlayer.getBlockNode(x, y);
 					lstNodeToSelect.add(r);
 
-//					if (bfPlayer.isHit(x, y, boolIsSalvaVariation, r, 0)) {
-//						System.out.println("return true");
-//						taShipCntPlayer.clear();
-//						Thread.sleep(100);
-//						taShipCntPlayer.setText(bfPlayer.intTotalAliveShips + "");
-//						Thread.sleep(100);
-//						taComputerScore.clear();
-//						Thread.sleep(100);
-//						taComputerScore.setText(bfComputer.intScore + "");
-//						break;
-//					} else {
-//						if (!boolIsSalvaVariation) {
-//							boolIsComputerTurn = false;
-//						}
-//					}
+					if (bfPlayer.isHit(x, y, boolIsSalvaVariation, r, 0)) {
+						System.out.println("return true");
+						taShipCntPlayer.clear();
+						Thread.sleep(100);
+						taShipCntPlayer.setText(bfPlayer.intTotalAliveShips + "");
+						Thread.sleep(100);
+						taComputerScore.clear();
+						Thread.sleep(100);
+						taComputerScore.setText(bfComputer.intScore + "");
+						break;
+					} else {
+						if (!boolIsSalvaVariation) {
+							boolIsComputerTurn = false;
+						}
+					}
 					System.out.println("error3:size:" + lstBlocksToBeSelect.size());
 					if (lstBlocksToBeSelect.size() > 0) {
 						System.out.println("in if====");
