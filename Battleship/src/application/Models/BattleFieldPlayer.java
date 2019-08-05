@@ -8,9 +8,20 @@ import java.util.Stack;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 
+/**
+ * 
+ * @author dhvaniagola
+ * @author arunipatel
+ * @author SAHIL
+ */
 public class BattleFieldPlayer extends BattleFieldsParent {
 	public Stack<DataCoordinates> stkHitPoints = new Stack<>();
 
+	/**
+	 * This constructor will set the initial value of each block of the grid.
+	 * 
+	 * @param gp Gridpane of Player
+	 */
 	public BattleFieldPlayer(GridPane gp) {
 		super(gp);
 		// TODO Auto-generated constructor stub
@@ -25,6 +36,13 @@ public class BattleFieldPlayer extends BattleFieldsParent {
 		}
 	}
 
+	/**
+	 * This method will calculate the coordinates such that computer will play smart
+	 * game.
+	 * 
+	 * @param intNoOfTurns How many maximum coordinates required
+	 * @return Returns list of the coordinates
+	 */
 	public List<DataCoordinates> getFromAIAlgorithm(int intNoOfTurns) {
 		// TODO Auto-generated method stub
 		List<DataCoordinates> lstReturn = new ArrayList<>();
@@ -50,6 +68,12 @@ public class BattleFieldPlayer extends BattleFieldsParent {
 		return lstReturn;
 	}
 
+	/**
+	 * This method will calculate neighbors of the passed coordinates.
+	 * 
+	 * @param dc Object which contains x and y coordinates
+	 * @return Returns List of the neighbors
+	 */
 	private List<DataCoordinates> getNeightbours(DataCoordinates dc) {
 		// TODO Auto-generated method stub
 		List<DataCoordinates> lstReturn = new ArrayList<>();
@@ -66,6 +90,12 @@ public class BattleFieldPlayer extends BattleFieldsParent {
 		return lstReturn;
 	}
 
+	/**
+	 * This method checks that all ships are having correct positions or not.
+	 * 
+	 * @param mapShipLocation A map in which all ships' position is stored
+	 * @return Returns true if all ships have correct position else returns false.
+	 */
 	public boolean allValidPositions(HashMap<Node, ShipLatestLocation> mapShipLocation) {
 		// TODO Auto-generated method stub
 		if (mapShipLocation.size() != 5)
