@@ -37,16 +37,16 @@ public class Server {
 			ds.receive(request);
 			ServerData sd = (ServerData) deserialize(request.getData());
 			doOperation(sd, request, ds);
+			
 			// Data dt=(Data) deserialize(request.getData());
 			System.out.println(sd.intPlayerId + "in server");
-			// System.out.println(new String(buffer) + " " + sd.intPlayerId + " " +
-			// sd.intOperationId);
-			// byte buf[] = null;
-			// buf = ("Hi Everyone").getBytes();
-			//
-			// DatagramPacket DpSend = new DatagramPacket(buf, buf.length, ip, 1235);
-			//
-			// ds.send(DpSend);
+			 System.out.println(new String(buffer) + " " + sd.intPlayerId + " " + sd.intOperationId);
+			 byte buf[] = null;
+			 buf = ("Hi Everyone").getBytes();
+			 
+			 DatagramPacket Dpsend= new DatagramPacket(buf, buf.length, ip, 1235);
+			 ds.send(Dpsend);
+
 		}
 		// ds.close();
 	}
@@ -74,7 +74,7 @@ public class Server {
 //			sdTemp = new ServerData(sd.intPlayerId, intOperationId, intReply);
 			break;
 		case 4:// addShip
-			doAddShip(sd);
+//			doAddShip(sd);
 			break;
 		case 5:// isHit //send reply to both
 //			sdTemp = checkIsHit(sd);
@@ -182,13 +182,13 @@ public class Server {
 //		}
 //	}
 
-	private static void doAddShip(ServerData sd) {
+//	private static void doAddShip(ServerData sd) {
 		// TODO Auto-generated method stub
 //		if (sd.intPlayerId == 1)
 //			bfPlayer.addShip(sd.size, sd.x, sd.y, sd.endX, sd.endY, sd.isDestroyed, sd.isRotated);
 //		else
 //			bfComputer.addShip(sd.size, sd.x, sd.y, sd.endX, sd.endY, sd.isDestroyed, sd.isRotated);
-	}
+//	}
 
 //	private static ServerData checkIsHit(ServerData sd) {
 		// TODO Auto-generated method stub
@@ -214,14 +214,14 @@ public class Server {
 //		}
 //	}
 
-	// private static void initializeObjects(ServerData sd) {
-	// // TODO Auto-generated method stub
-	// System.out.println("initializing object");
-	// if (sd.intPlayerId == 1)
-	// bfPlayer = new BattleFieldPlayer();
-	// else
-	// bfComputer = new BattleFieldComputer();
-	// }
+//	 private static void initializeObjects(ServerData sd) {
+//	 // TODO Auto-generated method stub
+//	 System.out.println("initializing object");
+//	 if (sd.intPlayerId == 1)
+//	 bfPlayer = new BattleFieldPlayer();
+//	 else
+//	 bfComputer = new BattleFieldComputer();
+//	 }
 
 	public static byte[] serialize(Object obj) throws IOException {
 		try (ByteArrayOutputStream b = new ByteArrayOutputStream()) {
