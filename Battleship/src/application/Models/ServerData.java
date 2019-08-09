@@ -26,6 +26,8 @@ public class ServerData implements Serializable {
 	public String strSelf = "";
 	public String strOther = "";
 	public boolean flag = false;
+	public String strUname = "";
+	public String strPass = "";
 
 	// public ServerData(int intPlayerId, int intOperationId) {
 	// this.intPlayerId = intPlayerId;
@@ -131,6 +133,14 @@ public class ServerData implements Serializable {
 		this.intPlayerId = intPlayerId;
 		this.intOperationId = intOperationId;
 		this.isSalva = isSalva;
+	}
+
+	// login
+	public ServerData(int intPlayerId, int intOperationId, String strUname, String strPass) {
+		this.intPlayerId = intPlayerId;
+		this.intOperationId = intOperationId;
+		this.strUname = strUname;
+		this.strPass = strPass;
 	}
 
 }

@@ -31,6 +31,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -99,6 +100,18 @@ public class Main implements Initializable {
 	private TextArea taShipCntPlayer;
 	@FXML
 	private TextArea taServerMessage;
+	@FXML
+	private Button bReload;
+	@FXML
+	private Button bSave;
+
+	// login module
+	@FXML
+	private TextField tfUname;
+	@FXML
+	private TextField tfPass;
+	@FXML
+	private Button bGo;
 
 	/**
 	 * This method id initialization point of the application.
@@ -108,11 +121,11 @@ public class Main implements Initializable {
 	 */
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
+		startButton.disableProperty().set(true);
+		bReload.disableProperty().set(true);
+		bSave.disableProperty().set(true);
 
-		// // Data dt=new Data(1,1,gpPlayer);
-		// // sendMessageToServerTemp(dt);
-
-		setUpUI();
+		// setUpUI();
 	}
 
 	/**
@@ -128,6 +141,7 @@ public class Main implements Initializable {
 		// if (result.get() == ButtonType.OK) {
 		// // System.exit(0);
 		// }
+		bReload.disableProperty().set(false);
 		startButton.disableProperty().set(true);
 
 		currentShip = ship1;
@@ -605,6 +619,7 @@ public class Main implements Initializable {
 		ServerData sd = new ServerData(1, 11);
 		try {
 			sendMessageToServer(sd);
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -620,6 +635,45 @@ public class Main implements Initializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@FXML
+	private void onRestart(ActionEvent event) {
+		ServerData sd = new ServerData(1, 13);
+		try {
+			sendMessageToServer(sd);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	private void onLogin(ActionEvent event) throws IOException {
+		// Battleship.stage.close();
+		// Parent root;
+		// try {
+		// root =
+		// FXMLLoader.load(getClass().getResource("/application/View/battleship.fxml"));
+		// Stage stage2 = new Stage();
+		// Scene scene = new Scene(root);
+		// stage2.setScene(scene);
+		// stage2.setTitle("Battleship");
+		// stage2.setResizable(false);
+		// stage2.show();
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// if (startButton.isVisible())
+		// System.out.println("dikh raha he");
+		// else
+		// System.out.println("nhi dikh raha");
+		String Uname = tfUname.getText().trim();
+		String pass = tfPass.getText().trim();
+		ServerData sd = new ServerData(1, 12, Uname, pass);
+		sendMessageToServer(sd);
+		setUpUI();
 	}
 
 	private void test() throws IOException {
@@ -709,6 +763,7 @@ public class Main implements Initializable {
 			if (reply == 1) {
 				taServerMessage.clear();
 				taServerMessage.setText("You can Start Game");
+				bSave.disableProperty().set(false);
 				//
 			} else if (reply == 2 && serverData.intPlayerId == 1) {
 
@@ -814,6 +869,7 @@ public class Main implements Initializable {
 			break;
 		case 11:
 			if (serverData.flag) {
+				bSave.disableProperty().set(false);
 				setShipsOnLocation(serverData.strSelf, serverData.strOther);
 				for (Node node : anchorPane.getChildren()) {
 					node.setOnMouseClicked(null);
@@ -850,6 +906,35 @@ public class Main implements Initializable {
 				}
 			}
 			break;
+		case 12:
+			taServerMessage.clear();
+			Thread.sleep(100);
+			taServerMessage.setText("Welcome " + serverData.strUname + "!");
+			break;
+		case 13:
+			taPlayerScore.clear();
+			Thread.sleep(100);
+			taPlayerScore.setText("00");
+			Thread.sleep(100);
+			taComputerScore.clear();
+			Thread.sleep(100);
+			taComputerScore.setText("00");
+			Thread.sleep(100);
+			taShipCntPlayer.clear();
+			Thread.sleep(100);
+			taShipCntPlayer.setText("0");
+			Thread.sleep(100);
+			taShipCntComputer.clear();
+			Thread.sleep(100);
+			taShipCntComputer.setText("0");
+			Thread.sleep(100);
+			taServerMessage.clear();
+			if (serverData.intPlayerId == 0) {
+
+				Thread.sleep(100);
+				taServerMessage.setText("Other User want to restart a game");
+			}
+
 		}
 
 	}

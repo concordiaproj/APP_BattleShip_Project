@@ -1,17 +1,20 @@
 package application.Models;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.Scanner;
 import java.util.TreeMap;
 
 public class Server {
@@ -24,12 +27,13 @@ public class Server {
 	public static String strComputerIP = "132.205.93.19";
 	public static int intComputerPort = 1236;
 	public static boolean isComputerTurn = false;
+	public static String strUserFile = "src\\User.txt";
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		// 172.30.15.203
-		bfPlayer = new BattleFieldPlayer("Player");
-		bfComputer = new BattleFieldComputer("Computer");
+		bfPlayer = new BattleFieldPlayer("");
+		bfComputer = new BattleFieldComputer("");
 		InetAddress ip = InetAddress.getLocalHost();
 		System.out.println(ip);
 		DatagramSocket ds = new DatagramSocket(intServerPort);
@@ -171,11 +175,37 @@ public class Server {
 				sdTemp = new ServerData(sd.intPlayerId, intOperationId, "", "", 00, 00, 0, 0, false);
 				sdTemp0 = new ServerData(sd.intPlayerId, intOperationId, "", "", 00, 00, 0, 0, false);
 			}
+			break;
+		case 12:
+			if (!checkForUserExist(sd.strUname, sd.strPass)) {
+				System.out.println(" not exist");
+				makeNewUserInFile(sd.strUname, sd.strPass);
+				// sdTemp = new ServerData(sd.intPlayerId, intOperationId,
+				// bfPlayer.strUserName.trim() == "" ? false : true,
+				// bfComputer.strUserName.trim() == "" ? false : true, false);
+
+			}
+			// else {
+			//
+			// System.out.println("not exist");
+			// intOperationId = 1000;
+			// // sdTemp = new ServerData(sd.intPlayerId, intOperationId, "", "", false);
+			// }
+			setUserName(sd);
+			sdTemp = new ServerData(sd.intPlayerId, intOperationId, sd.strUname, "");
+			break;
+		case 13:// restart
+			String strP = bfPlayer.strUserName;
+			String strC = bfComputer.strUserName;
+			bfPlayer = new BattleFieldPlayer(strP);
+			bfComputer = new BattleFieldComputer(strC);
+			sdTemp = new ServerData(sd.intPlayerId, intOperationId);
+			break;
 		}
 		if (sdTemp != null) {
 			System.out.println("operation id to send to client:" + intOperationId);
 			if (intOperationId == 1 || intOperationId == 3 || intOperationId == 5 || intOperationId == 6
-					|| intOperationId == 10) {
+					|| intOperationId == 10 || intOperationId == 13) {
 				DatagramPacket DpSend = new DatagramPacket(serialize(sdTemp), serialize(sdTemp).length,
 						InetAddress.getByName(strPlayerIP), intPlayerPort);
 
@@ -210,6 +240,52 @@ public class Server {
 			}
 		}
 		// ds.close();
+	}
+
+	private static void makeNewUserInFile(String strUserName, String strPassWord) {
+		// TODO Auto-generated method stub
+		try {
+			// TODO Auto-generated method stub
+			BufferedWriter out = new BufferedWriter(new FileWriter(strUserFile, true));
+			out.write(strUserName + ";" + strPassWord + "\n");
+			out.close();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private static void setUserName(ServerData sd) {
+		// TODO Auto-generated method stub
+		if (sd.intPlayerId == 1)
+			bfPlayer.strUserName = sd.strUname;
+		else
+			bfComputer.strUserName = sd.strUname;
+
+	}
+
+	private static boolean checkForUserExist(String strUserName, String strPassWord) {
+		// TODO Auto-generated method stub
+		File file = new File(strUserFile);
+		Scanner sc;
+		try {
+			if (!file.exists())
+				file.createNewFile();
+			sc = new Scanner(file);
+			while (sc.hasNextLine()) {
+				String strLine = sc.nextLine();
+				String strArr[] = strLine.split(";");
+				if (strArr[0].trim().equals(strUserName) && strArr[1].trim().equals(strPassWord))
+					return true;
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return false;
 	}
 
 	private static String getFileName() {
