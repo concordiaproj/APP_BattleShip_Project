@@ -389,7 +389,16 @@ public class Server {
 			}
 		}
 	}
-
+private static void getName() {
+	String str="PlayerID";
+	if(str.equalsIgnoreCase("PlayerID")) {
+		for(int i=0;i<10;i++) {
+			for(int j=0;j<10;j++) {
+				System.out.println(str+":"+i+","+j);
+			}
+		}
+	}
+}
 	private static void setTurn(ServerData sd) {
 		// TODO Auto-generated method stub
 		isComputerTurn = sd.isComputerTurn;
