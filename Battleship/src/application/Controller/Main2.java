@@ -15,9 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-//import application.Models.Data;
-import application.Models.ServerData;
-import application.Models.ShipLatestLocation;
+import application.Models.ServerData2;
+import application.Models.ShipLatestLocation2;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -47,9 +46,7 @@ import javafx.scene.shape.Rectangle;
  * @author Sahana
  *
  */
-public class Main implements Initializable {
-	// public static BattleFieldPlayer bfPlayer;
-	// public static BattleFieldComputer bfComputer;
+public class Main2 implements Initializable {
 	private double CELL_SIZE = 30.0;
 	private boolean boolIsClicked = false;
 	private boolean boolIsRequiredToRotate = true;
@@ -60,16 +57,16 @@ public class Main implements Initializable {
 	public int intNoOfTurns = 1;
 	private long longTime = System.currentTimeMillis();
 	public static List<Rectangle> lstNodeToSelect = new ArrayList<>();
-	private HashMap<String, ShipLatestLocation> mapShipLocation = new HashMap<>();
+	private HashMap<String, ShipLatestLocation2> mapShipLocation = new HashMap<>();
 	public static String strServerIp = "132.205.93.41";
 	public static int intServerPort = 1235;
 
 	@FXML
 	private Rectangle ship1;
 	@FXML
-	private GridPane gpComputer;
-	@FXML
 	private GridPane gpPlayer;
+	@FXML
+	private GridPane gpComputer;
 	@FXML
 	private AnchorPane anchorPane;
 	@FXML
@@ -119,16 +116,16 @@ public class Main implements Initializable {
 	 * This method id initialization point of the application.
 	 * 
 	 * @param url
-	 *            Object of URL
 	 * @param resourceBundle
-	 *            Object of ResourceBundle
 	 */
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
+
 		startButton.disableProperty().set(true);
 		bReload.disableProperty().set(true);
 		bSave.disableProperty().set(true);
 		bRestart.disableProperty().set(true);
+		// setUpUI();
 	}
 
 	/**
@@ -147,11 +144,14 @@ public class Main implements Initializable {
 				try {
 					UDPListening();
 				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}).start();
@@ -160,24 +160,17 @@ public class Main implements Initializable {
 		eventsForShips(ship3);
 		eventsForShips(ship4);
 		eventsForShips(ship5);
-		for (Node node : gpComputer.getChildren()) {
+		for (Node node : gpPlayer.getChildren()) {
 			Rectangle rect = (Rectangle) node;
 			rect.setDisable(true);
 		}
 		taPlayerScore.clear();
-		// Thread.sleep(50);
 		taPlayerScore.setText("00");
-		// Thread.sleep(50);
 		taComputerScore.clear();
-		// Thread.sleep(50);
 		taComputerScore.setText("00");
-		// Thread.sleep(50);
 		taShipCntPlayer.clear();
-		// Thread.sleep(50);
 		taShipCntPlayer.setText("0");
-		// Thread.sleep(50);
 		taShipCntComputer.clear();
-		// Thread.sleep(50);
 		taShipCntComputer.setText("0");
 	}
 
@@ -212,9 +205,10 @@ public class Main implements Initializable {
 				int x = (int) (localX / CELL_SIZE);
 				int y = (int) (localY / CELL_SIZE);
 				try {
-					ServerData sd = new ServerData(1, 9, x, y);
+					ServerData2 sd = new ServerData2(0, 9, x, y);
 					sendMessageToServer(sd);
 				} catch (IOException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				ndShip.setCursor(Cursor.MOVE);
@@ -267,15 +261,17 @@ public class Main implements Initializable {
 	 * <li>Click event after game started</li>
 	 * </ul>
 	 * 
+	 * @param bfComputerParam
+	 *            Object of the computer grid.
 	 */
-	void setComputerGridResponding() {
-		for (Node node : gpComputer.getChildren()) {
+	void setComputerGridResponding() {// PlayerGrid
+		for (Node node : gpPlayer.getChildren()) {
 			Rectangle rect = (Rectangle) node;
 			rect.disableProperty().set(false);
 
 			rect.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				public void handle(MouseEvent event) {
-					if (boolIsComputerTurn) {
+					if (!boolIsComputerTurn) {
 						return;
 					}
 					System.out.println("Clicked on comp board");
@@ -293,7 +289,7 @@ public class Main implements Initializable {
 							int intY = GridPane.getColumnIndex(lstNodeToSelect.get(0));// y
 							int intX = GridPane.getRowIndex(lstNodeToSelect.get(0));// x
 							try {
-								ServerData sd = new ServerData(1, 5, intX, intY, boolIsSalvaVariation, 0);
+								ServerData2 sd = new ServerData2(0, 5, intX, intY, boolIsSalvaVariation, 0);
 								sendMessageToServer(sd);
 							} catch (IOException e) {
 								e.printStackTrace();
@@ -301,12 +297,15 @@ public class Main implements Initializable {
 							lstNodeToSelect.remove(0);
 						}
 
-						ServerData sd = new ServerData(1, 6, true, false);
+						lstNodeToSelect.clear();
+						ServerData2 sd = new ServerData2(0, 6, false, false);
 						try {
 							sendMessageToServer(sd);
 						} catch (IOException e) {
+							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+						// boolIsComputerTurn = false;
 						longTime = System.currentTimeMillis();
 					} else
 						return;
@@ -322,9 +321,9 @@ public class Main implements Initializable {
 	 * <li>Drag and drop events for placing the ships before starting a game.</li>
 	 * </ul>
 	 * 
-	 * 
+	 * @param bfPlayerParam
 	 */
-	void setPlayerGridResponding() {
+	void setPlayerGridResponding() {// computerGrid
 		anchorPane.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			//
 			@Override
@@ -341,21 +340,21 @@ public class Main implements Initializable {
 						double localX = event2.getY() - 334.0;// ***
 
 						int size = (int) ((int) currentShip.getWidth() / CELL_SIZE);
-						ShipLatestLocation sll = new ShipLatestLocation(localX, localY, size, isRotated);
+						ShipLatestLocation2 sll = new ShipLatestLocation2(localX, localY, size, isRotated);
 						mapShipLocation.put(n.getId(), sll);
 						try {
-							ServerData sd = new ServerData(1, 2, mapShipLocation);
+							ServerData2 sd = new ServerData2(0, 2, mapShipLocation);
 							sendMessageToServer(sd);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
 
-						if (gpPlayer.contains(localX, localY)) {
+						if (gpComputer.contains(localX, localY)) {
 							int x = (int) (localX / CELL_SIZE);
 							int y = (int) (localY / CELL_SIZE);
 
 							Rectangle r = null;
-							for (Node nd : gpPlayer.getChildren()) {
+							for (Node nd : gpComputer.getChildren()) {
 								if (nd != null) {
 									if (GridPane.getRowIndex(nd) == x && GridPane.getColumnIndex(nd) == y)
 										r = (Rectangle) nd;
@@ -416,13 +415,14 @@ public class Main implements Initializable {
 	 */
 	@FXML
 	private void onGameStart(ActionEvent event) throws IOException {
+
 		for (String n : mapShipLocation.keySet()) {
-			ShipLatestLocation sll = mapShipLocation.get(n);
-			if (gpPlayer.contains(sll.intLocalX, sll.intLocalY)) {
+			ShipLatestLocation2 sll = mapShipLocation.get(n);
+			if (gpComputer.contains(sll.intLocalX, sll.intLocalY)) {
 				int x = (int) (sll.intLocalX / CELL_SIZE);
 				int y = (int) (sll.intLocalY / CELL_SIZE);
 				Rectangle r = null;
-				for (Node nd : gpPlayer.getChildren()) {
+				for (Node nd : gpComputer.getChildren()) {
 					if (nd != null) {
 						if (GridPane.getRowIndex(nd) == x && GridPane.getColumnIndex(nd) == y)
 							r = (Rectangle) nd;
@@ -437,7 +437,7 @@ public class Main implements Initializable {
 					endY = y;
 				}
 				System.out.println("x,y : endx,endy" + x + "," + y + " : " + endX + "," + endY);
-				ServerData sd = new ServerData(1, 4, sll.size, x, y, endX, endY, false, sll.boolIsRotated);
+				ServerData2 sd = new ServerData2(0, 4, sll.size, x, y, endX, endY, false, sll.boolIsRotated);
 				sendMessageToServer(sd);
 			}
 		}
@@ -448,7 +448,7 @@ public class Main implements Initializable {
 			intNoOfTurns = 5;
 		}
 
-		ServerData sd = new ServerData(1, 3, boolIsSalvaVariation);
+		ServerData2 sd = new ServerData2(0, 3, boolIsSalvaVariation);
 		sendMessageToServer(sd);
 		taShipCntPlayer.clear();
 		taShipCntPlayer.setText("5");
@@ -468,7 +468,7 @@ public class Main implements Initializable {
 	@FXML
 	private void onDiscartGame(ActionEvent event) throws IOException {
 		System.out.println("To discart game");
-		ServerData sd = new ServerData(1, 1, true);
+		ServerData2 sd = new ServerData2(0, 1, true);
 		sendMessageToServer(sd);
 	}
 
@@ -480,10 +480,9 @@ public class Main implements Initializable {
 	 */
 	@FXML
 	private void onReloadGame(ActionEvent event) {
-		ServerData sd = new ServerData(1, 11);
+		ServerData2 sd = new ServerData2(0, 11);
 		try {
 			sendMessageToServer(sd);
-
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -499,7 +498,7 @@ public class Main implements Initializable {
 	 */
 	@FXML
 	private void onSaveGame(ActionEvent event) {
-		ServerData sd = new ServerData(1, 10);
+		ServerData2 sd = new ServerData2(0, 10);
 		try {
 			sendMessageToServer(sd);
 		} catch (IOException e) {
@@ -515,7 +514,7 @@ public class Main implements Initializable {
 		}
 		anchorPane.setOnMouseReleased(null);
 		anchorPane.setOnMouseDragged(null);
-		gpComputer.disableProperty().set(true);
+		gpPlayer.disableProperty().set(true);
 	}
 
 	/**
@@ -527,7 +526,7 @@ public class Main implements Initializable {
 	 */
 	@FXML
 	private void onRestart(ActionEvent event) {
-		ServerData sd = new ServerData(1, 13);
+		ServerData2 sd = new ServerData2(0, 13);
 		try {
 			sendMessageToServer(sd);
 			setUpUI();
@@ -548,7 +547,7 @@ public class Main implements Initializable {
 	private void onLogin(ActionEvent event) throws IOException {
 		String Uname = tfUname.getText().trim();
 		String pass = tfPass.getText().trim();
-		ServerData sd = new ServerData(1, 12, Uname, pass);
+		ServerData2 sd = new ServerData2(0, 12, Uname, pass);
 		sendMessageToServer(sd);
 		setUpUI();
 	}
@@ -559,39 +558,36 @@ public class Main implements Initializable {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 * @throws InterruptedException
-	 * @throws userNotFoundExc
 	 */
 	private void UDPListening() throws IOException, ClassNotFoundException, InterruptedException {
 		// TODO Auto-generated method stub
-		DatagramSocket ds = new DatagramSocket(1234);
+		DatagramSocket ds = new DatagramSocket(1236);
 
 		DatagramPacket request = null;
 		while (true) {
 			byte[] buffer = new byte[1000];
 			request = new DatagramPacket(buffer, buffer.length);
 			ds.receive(request);
-			ServerData serverData = (ServerData) deserialize(request.getData());
-			getResponse(serverData);
+			ServerData2 ServerData2 = (ServerData2) deserialize(request.getData());
+			getResponse(ServerData2);
 		}
 	}
 
 	/**
 	 * This method will perform a action according to response received from server.
 	 * 
-	 * @param serverData
-	 *            Object of ServerData class
+	 * @param ServerData2
+	 *            Object of ServerData2 class
 	 * @throws InterruptedException
-	 * @throws userNotFoundExc
 	 */
-	private void getResponse(ServerData serverData) throws InterruptedException {
-		// TODO Auto-generated method stub
-		System.out.println("IN GETRESPONSE");
 
-		int intOperationId = serverData.intOperationId;
+	private void getResponse(ServerData2 ServerData2) throws InterruptedException {
+		// TODO Auto-generated method stub
+
+		int intOperationId = ServerData2.intOperationId;
 		switch (intOperationId) {
 		case 1:
-			if (serverData.intPlayerId == 1) {
-				// throw new userNotFoundExc("Game Discarded");
+			if (ServerData2.intPlayerId == 0) {
 				System.exit(0);
 			} else {
 				Platform.runLater(() -> {
@@ -606,14 +602,14 @@ public class Main implements Initializable {
 				});
 			}
 		case 2:
-			if (serverData.boolReturn)
+			if (ServerData2.boolReturn)
 				startButton.disableProperty().set(false);
 			else
 				startButton.disableProperty().set(true);
 			break;
 		case 3:
-			int reply = serverData.intReply;
-			if (reply == 1 || (reply == 4 && serverData.intPlayerId == 1)) {
+			int reply = ServerData2.intReply;
+			if (reply == 1 || (reply == 4 && ServerData2.intPlayerId == 0)) {
 				for (Node node : anchorPane.getChildren()) {
 					node.setOnMouseClicked(null);
 					node.setOnMouseDragged(null);
@@ -633,16 +629,16 @@ public class Main implements Initializable {
 				bSave.disableProperty().set(false);
 				bRestart.disableProperty().set(false);
 				//
-			} else if (reply == 2 && serverData.intPlayerId == 1) {
+			} else if (reply == 2 && ServerData2.intPlayerId == 0) {
 
 				taServerMessage.clear();
 				taServerMessage.setText("Other Player Want to Play on Salva");
-			} else if (reply == 3 && serverData.intPlayerId == 1) {
+			} else if (reply == 3 && ServerData2.intPlayerId == 0) {
 				taServerMessage.clear();
 				taServerMessage.setText("Other Player want to play on Normal");
 			} else if (reply == 4) {
 				taServerMessage.clear();
-				if (serverData.intPlayerId == 1) {
+				if (ServerData2.intPlayerId == 0) {
 
 					taServerMessage.setText("Wait for other player to be ready");
 				} else {
@@ -650,50 +646,48 @@ public class Main implements Initializable {
 				}
 			}
 		case 5:
-			if (serverData.intPlayerId == 1) {
-				for (Node n : gpComputer.getChildren()) {
+			if (ServerData2.intPlayerId == 0) {
+				for (Node n : gpPlayer.getChildren()) {
 					if (n != null) {
-						if (GridPane.getRowIndex(n) == serverData.x && GridPane.getColumnIndex(n) == serverData.y) {
+						if (GridPane.getRowIndex(n) == ServerData2.x && GridPane.getColumnIndex(n) == ServerData2.y) {
 							Rectangle r = (Rectangle) n;
-							if (serverData.c == 'G')
+							if (ServerData2.c == 'G')
 								r.setFill(Color.GREY);
-							else if (serverData.c == 'R')
+							else if (ServerData2.c == 'R')
 								r.setFill(Color.RED);
 						}
 					}
 				}
 			} else {
-				System.out.println("Computer's turn");
-				for (Node n : gpPlayer.getChildren()) {
+				for (Node n : gpComputer.getChildren()) {
 					if (n != null) {
-						if (GridPane.getRowIndex(n) == serverData.x && GridPane.getColumnIndex(n) == serverData.y) {
+						if (GridPane.getRowIndex(n) == ServerData2.x && GridPane.getColumnIndex(n) == ServerData2.y) {
 							Rectangle r = (Rectangle) n;
-							if (serverData.c == 'G')
+							if (ServerData2.c == 'G')
 								r.setFill(Color.GREY);
-							else if (serverData.c == 'R')
+							else if (ServerData2.c == 'R')
 								r.setFill(Color.RED);
 						}
 					}
 				}
 			}
-			System.out.println("line1-P");
+			System.out.println("line1");
 			taPlayerScore.clear();
 			Thread.sleep(100);
-			taPlayerScore.setText(serverData.intPlayerScore + "");
+			taPlayerScore.setText(ServerData2.intCompScore + "");
 			Thread.sleep(100);
 			taComputerScore.clear();
 			Thread.sleep(100);
-			taComputerScore.setText(serverData.intCompScore + "");
+			taComputerScore.setText(ServerData2.intPlayerScore + "");
 			Thread.sleep(100);
 			taShipCntPlayer.clear();
 			Thread.sleep(100);
-			taShipCntPlayer.setText(serverData.intPlayerAliveShip + "");
+			taShipCntPlayer.setText(ServerData2.intCompAliveShip + "");
 			Thread.sleep(100);
 			taShipCntComputer.clear();
 			Thread.sleep(100);
-			taShipCntComputer.setText(serverData.intCompAliveShip + "");
-
-			if (serverData.intPlayerId == 1 && serverData.isWinner) {
+			taShipCntComputer.setText(ServerData2.intPlayerAliveShip + "");
+			if (ServerData2.intPlayerId == 0 && ServerData2.isWinner) {
 				Platform.runLater(() -> {
 					Alert alert = new Alert(AlertType.INFORMATION);
 					alert.setTitle("Information Dialog");
@@ -705,7 +699,7 @@ public class Main implements Initializable {
 					}
 				});
 			}
-			if (serverData.intPlayerId == 0 && serverData.isWinner) {
+			if (ServerData2.intPlayerId == 1 && ServerData2.isWinner) {
 				Platform.runLater(() -> {
 					Alert alert = new Alert(AlertType.INFORMATION);
 					alert.setTitle("Information Dialog");
@@ -719,11 +713,10 @@ public class Main implements Initializable {
 			}
 			break;
 		case 6:
-			boolIsComputerTurn = serverData.isComputerTurn;
+			boolIsComputerTurn = ServerData2.isComputerTurn;
 			break;
 		case 10:
-			System.out.println("case 10 Main");
-			if (serverData.intPlayerId == 1) {
+			if (ServerData2.intPlayerId == 0) {
 				taServerMessage.clear();
 				taServerMessage.setText("Game Is Saved");
 			} else {
@@ -732,11 +725,10 @@ public class Main implements Initializable {
 			}
 			break;
 		case 11:
-			if (serverData.flag) {
+			if (ServerData2.flag) {
 				bSave.disableProperty().set(false);
 				bRestart.disableProperty().set(false);
-				setShipsOnLocation(serverData.strSelf, serverData.strOther);
-				boolIsSalvaVariation = serverData.isSalva;
+				setShipsOnLocation(ServerData2.strSelf, ServerData2.strOther);
 				for (Node node : anchorPane.getChildren()) {
 					node.setOnMouseClicked(null);
 					node.setOnMouseDragged(null);
@@ -746,35 +738,34 @@ public class Main implements Initializable {
 				}
 				anchorPane.setOnMouseReleased(null);
 				anchorPane.setOnMouseDragged(null);
-				// bfComputer.deployComputerShips();
 				setComputerGridResponding();
 				taPlayerScore.clear();
 				Thread.sleep(100);
-				taPlayerScore.setText(serverData.intPlayerScore + "");
+				taPlayerScore.setText(ServerData2.intPlayerScore + "");
 				Thread.sleep(100);
 				taComputerScore.clear();
 				Thread.sleep(100);
-				taComputerScore.setText(serverData.intCompScore + "");
+				taComputerScore.setText(ServerData2.intCompScore + "");
 				Thread.sleep(100);
 				taShipCntPlayer.clear();
 				Thread.sleep(100);
-				taShipCntPlayer.setText(serverData.intPlayerAliveShip + "");
+				taShipCntPlayer.setText(ServerData2.intPlayerAliveShip + "");
 				Thread.sleep(100);
 				taShipCntComputer.clear();
 				Thread.sleep(100);
-				taShipCntComputer.setText(serverData.intCompAliveShip + "");
-
+				taShipCntComputer.setText(ServerData2.intCompAliveShip + "");
 			} else {
-				if (serverData.intPlayerId == 1) {
+				if (ServerData2.intPlayerId == 1) {
 					taServerMessage.clear();
 					taServerMessage.setText("No game found");
+					// print message : No game found
 				}
 			}
 			break;
 		case 12:
 			taServerMessage.clear();
 			Thread.sleep(100);
-			taServerMessage.setText("Welcome " + serverData.strUname + "!");
+			taServerMessage.setText("Welcome " + ServerData2.strUname + "!");
 			break;
 		case 13:
 			taPlayerScore.clear();
@@ -794,7 +785,7 @@ public class Main implements Initializable {
 			taShipCntComputer.setText("0");
 			Thread.sleep(100);
 			taServerMessage.clear();
-			if (serverData.intPlayerId == 0) {
+			if (ServerData2.intPlayerId == 1) {
 
 				Thread.sleep(100);
 				taServerMessage.setText("Other User want to restart a game");
@@ -840,7 +831,7 @@ public class Main implements Initializable {
 		}
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
-				for (Node nd : gpPlayer.getChildren()) {
+				for (Node nd : gpComputer.getChildren()) {
 					if (nd != null) {
 						if (GridPane.getRowIndex(nd) == i && GridPane.getColumnIndex(nd) == j) {
 							r = (Rectangle) nd;
@@ -856,7 +847,7 @@ public class Main implements Initializable {
 						}
 					}
 				}
-				for (Node nd : gpComputer.getChildren()) {
+				for (Node nd : gpPlayer.getChildren()) {
 					if (nd != null) {
 						if (GridPane.getRowIndex(nd) == i && GridPane.getColumnIndex(nd) == j) {
 							r = (Rectangle) nd;
@@ -884,15 +875,14 @@ public class Main implements Initializable {
 	 * This method will send a UDP request to the server
 	 * 
 	 * @param sd
-	 *            Object of ServerData class
+	 *            Object of ServerData2 class
 	 * @throws IOException
-	 *             input output exception
 	 */
-	public static void sendMessageToServer(ServerData sd) throws IOException {
+
+	public static void sendMessageToServer(ServerData2 sd) throws IOException {
 		DatagramSocket ds = new DatagramSocket();
-		System.out.println("going to send to id : " + sd.intOperationId);
 		InetAddress ip = InetAddress.getByName(strServerIp);
-		byte buf[] = null;
+		byte[] buf = null;
 		buf = (serialize(sd));
 		DatagramPacket DpSend = new DatagramPacket(buf, buf.length, ip, intServerPort);
 
@@ -907,7 +897,6 @@ public class Main implements Initializable {
 	 *            Object which need to be serialized
 	 * @return Returns serialized byte array
 	 * @throws IOException
-	 *             input output exception
 	 */
 	public static byte[] serialize(Object obj) throws IOException {
 		try (ByteArrayOutputStream b = new ByteArrayOutputStream()) {
@@ -925,9 +914,7 @@ public class Main implements Initializable {
 	 *            Byte array which need to be deserialized
 	 * @return Returns deserialized object
 	 * @throws IOException
-	 *             input output exception
 	 * @throws ClassNotFoundException
-	 *             class is not found
 	 */
 	public static Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
 		try (ByteArrayInputStream b = new ByteArrayInputStream(bytes)) {

@@ -5,6 +5,8 @@
  */
 package application.Models;
 
+import java.net.InetAddress;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,13 +18,11 @@ import javafx.stage.Stage;
  * @author dhvaniagola
  *
  */
-public class Battleship extends Application {
-	public static Stage stage;
+public class Battleship2 extends Application {
 
 	/**
 	 * 
 	 * @param args
-	 *            arguments for main method
 	 */
 	public static void main(String[] args) {
 		launch(args);
@@ -30,14 +30,12 @@ public class Battleship extends Application {
 
 	/**
 	 * @param stage
-	 *            Object of Stage
 	 * @throws Exception
-	 *             Exception for Parent class
 	 */
 	@Override
 	public void start(Stage stage) throws Exception {
-		this.stage = stage;
-		Parent root = FXMLLoader.load(getClass().getResource("/application/View/battleship.fxml"));
+		System.out.println(InetAddress.getLocalHost());
+		Parent root = FXMLLoader.load(getClass().getResource("/application/View/battleship2.fxml"));
 
 		Scene scene = new Scene(root);
 		stage.setScene(scene);

@@ -31,8 +31,8 @@ public abstract class BattleFieldsParent {
 	 * This Constructor will set the gridPane object and initial value of total
 	 * alive ships
 	 * 
-	 * @param gp
-	 *            Grid of the player
+	 * @param strUserName
+	 *            user name of a player
 	 */
 	// public BattleFieldsParent(GridPane gp) {
 	public BattleFieldsParent(String strUserName) {
@@ -42,55 +42,30 @@ public abstract class BattleFieldsParent {
 	}
 
 	/**
-	 * This method convert x and y coordinates to the Node object
-	 * 
-	 * @param x
-	 *            x-coordinate of the node
-	 * @param y
-	 *            Y-coordinate of the node
-	 * @return Returns the node with coordinates (x,y)
-	 */
-	// public Node getBlockNode(int x, int y) {
-	// GridPane gpTemp = this.gridPane;
-	//
-	// for (Node n : gpTemp.getChildren()) {
-	// if (n == null) {
-	// return null;
-	// }
-	// if (GridPane.getRowIndex(n) == null || GridPane.getColumnIndex(n) == null) {
-	// System.out.println("gpTemp Null");
-	// }
-	// if (GridPane.getRowIndex(n) == x && GridPane.getColumnIndex(n) == y) {
-	// return n;
-	// }
-	// }
-	// return null;
-	// }
-
-	/**
 	 * This method will store a ship in the data structure.
 	 * 
-	 * @param ship
-	 *            A ship which need to be store
+	 * @param size
+	 *            Size of Ship.
+	 * @param startX
+	 *            X-coord of starting of ship
+	 * @param startY
+	 *            Y-coord of starting of ship
+	 * @param endX
+	 *            X-coord of ending of ship
+	 * @param endY
+	 *            Y-coord of ending of ship
+	 * @param isDestroyed
+	 *            Ship destroyed or not
 	 * @param isRotated
-	 *            Is ship is rotated or not
+	 *            Ship rotated or not
 	 */
 	public void addShip(int size, int startX, int startY, int endX, int endY, boolean isDestroyed, boolean isRotated) {
 
-		// Do NOT add ship if it's not valid. (only applies to player game board)
-		// if (id == 1) {
-		// if (!this.isValidToPlace(ship.getSX(), ship.getSY(), ship.getSizeOfShip(),
-		// isRotated)) {
-		// return;
-		// }
-		// }
 		Ship2 ship = new Ship2(size, startX, startY, endX, endY, isDestroyed);
 		ship.setShipCoord();
 
 		for (int x = ship.getSX(); x <= ship.getEX(); x++) {
 			for (int y = ship.getSY(); y <= ship.getEY(); y++) {
-				// Ship2 oldShip = this.gameBoard.get(x).get(y).getShip();
-				// this.gameBoard.get(x).get(y).setShip(ship);
 			}
 		}
 		if (ship.intStartX == ship.intEndX) {
@@ -120,46 +95,45 @@ public abstract class BattleFieldsParent {
 	 *            is ship rotated or not
 	 * @return Returns true if ship is valid to place else returns false
 	 */
-	// public boolean isValidToPlace(int x, int y, int intSize, boolean
-	// boolIsRotated) {
-	// // if boolIsRotated is true:vertical ship
-	// int xEnd = x;
-	// int yEnd = y;
-	//
-	// if (boolIsRotated) {
-	// xEnd = x + intSize - 1;
-	// } else
-	// yEnd = y + intSize - 1;
-	//// System.out.println("xEnd,yEnd,isRotate:"+xEnd+","+yEnd+","+boolIsRotated);
-	// if (xEnd > 9 || yEnd > 9)
-	// return false;
-	// if (boolIsRotated) {
-	// for (int i = x; i <= xEnd; i++) {
-	// for (int j = -1; j <= 1; j++) {
-	// for (int k = -1; k <= 1; k++) {
-	// if ((i + j) >= 0 && (i + j) < 10 && (y + k) >= 0 && (y + k) < 10) {
-	//
-	// if (this.gameBoard.get(i + j).get(y + k).getCharOccupiedFor() == 'S')
-	// return false;
-	// }
-	// }
-	// }
-	// }
-	// } else {
-	// for (int i = y; i <= yEnd; i++) {
-	// for (int j = -1; j <= 1; j++) {
-	// for (int k = -1; k <= 1; k++) {
-	// if ((x + j) >= 0 && (x + j) < 10 && (i + k) >= 0 && (i + k) < 10) {
-	//// System.out.println("neightbours : "+(x+j)+","+(i+k));
-	// if (this.gameBoard.get(x + j).get(i + k).getCharOccupiedFor() == 'S')
-	// return false;
-	// }
-	// }
-	// }
-	// }
-	// }
-	// return true;
-	// }
+	public boolean isValidToPlace(int x, int y, int intSize, boolean boolIsRotated) {
+		// if boolIsRotated is true:vertical ship
+		int xEnd = x;
+		int yEnd = y;
+
+		if (boolIsRotated) {
+			xEnd = x + intSize - 1;
+		} else
+			yEnd = y + intSize - 1;
+		// System.out.println("xEnd,yEnd,isRotate:"+xEnd+","+yEnd+","+boolIsRotated);
+		if (xEnd > 9 || yEnd > 9)
+			return false;
+		if (boolIsRotated) {
+			for (int i = x; i <= xEnd; i++) {
+				for (int j = -1; j <= 1; j++) {
+					for (int k = -1; k <= 1; k++) {
+						if ((i + j) >= 0 && (i + j) < 10 && (y + k) >= 0 && (y + k) < 10) {
+
+							if (this.gameBoard.get(i + j).get(y + k).getCharOccupiedFor() == 'S')
+								return false;
+						}
+					}
+				}
+			}
+		} else {
+			for (int i = y; i <= yEnd; i++) {
+				for (int j = -1; j <= 1; j++) {
+					for (int k = -1; k <= 1; k++) {
+						if ((x + j) >= 0 && (x + j) < 10 && (i + k) >= 0 && (i + k) < 10) {
+							// System.out.println("neightbours : "+(x+j)+","+(i+k));
+							if (this.gameBoard.get(x + j).get(i + k).getCharOccupiedFor() == 'S')
+								return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * This method checks that after hit on (x,y) the whole ship is destroyed or
@@ -196,16 +170,11 @@ public abstract class BattleFieldsParent {
 	 * This method checks that the hit is successful or missed and update the result
 	 * in data structure and also update the UI.
 	 * 
-	 * @param x
-	 *            x-coordinate of hit
-	 * @param y
-	 *            y-coordinate of hit
-	 * @param isSalva
-	 *            the game is normal or salva variation
-	 * @param r
-	 *            Rectangle on which player hit
-	 * @param i
-	 *            Index of the list
+	 * @param x x-coordinate of hit
+	 * @param y y-coordinate of hit
+	 * @param isSalva the game is normal or salva variation
+	 * 
+	 * @param i Index of the list
 	 * @return Returns true is player hit on ship or on already hit place else
 	 *         returns false
 	 */
@@ -222,18 +191,11 @@ public abstract class BattleFieldsParent {
 		if (this.gameBoard.get(x).get(y).getCharOccupiedFor() == 'M'
 				|| this.gameBoard.get(x).get(y).getCharOccupiedFor() == 'H') {
 			if (this.gameBoard.get(x).get(y).getCharOccupiedFor() == 'M') {
-				// Main.lstNodeToSelect.get(i).setFill(Color.GREY);
-				// c = 'G';
 				sd.c = 'G';
 			} else {
-				// Main.lstNodeToSelect.get(i).setFill(Color.RED);
-				// c = 'R';
 				sd.c = 'R';
 			}
 			if (!isSalva) {
-				// System.out.println("going to clear 1");
-				// Main.lstNodeToSelect.clear();
-				// return true;
 				sd.boolReturn = true;
 				return sd;
 			}
@@ -243,8 +205,6 @@ public abstract class BattleFieldsParent {
 			} else
 				Server.bfPlayer.intScore += 50;
 			this.gameBoard.get(x).get(y).setCharOccupiedFor('H');
-			// Main.lstNodeToSelect.get(i).setFill(Color.RED);
-			// c = 'R';
 			sd.c = 'R';
 			if (this.id == 1)
 				Server.bfPlayer.stkHitPoints.push(new DataCoordinates(x, y));
@@ -259,8 +219,6 @@ public abstract class BattleFieldsParent {
 				}
 			}
 			if (!isSalva) {
-				// Main.lstNodeToSelect.clear();
-				// return true;
 				sd.boolReturn = true;
 				return sd;
 			}
@@ -268,10 +226,8 @@ public abstract class BattleFieldsParent {
 
 		else if (this.gameBoard.get(x).get(y).getCharOccupiedFor() == 'B') {
 			this.gameBoard.get(x).get(y).setCharOccupiedFor('M');
-			// Main.lstNodeToSelect.get(i).setFill(Color.GREY);
 			sd.c = 'G';
 		}
-		// return false;
 		sd.boolReturn = false;
 		return sd;
 	}

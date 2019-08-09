@@ -16,10 +16,9 @@ public class BattleFieldPlayer extends BattleFieldsParent {
 	/**
 	 * This constructor will set the initial value of each block of the grid.
 	 * 
-	 * @param gp
-	 *            Gridpane of Player
+	 * @param strUserName
+	 *            User name of a player
 	 */
-	// public BattleFieldPlayer(GridPane gp) {
 	public BattleFieldPlayer(String strUserName) {
 		super(strUserName);
 		// TODO Auto-generated constructor stub

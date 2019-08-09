@@ -22,14 +22,29 @@ public class Server {
 	public static BattleFieldComputer bfComputer;
 	public static int intServerPort = 1235;
 	public static boolean isSalva = false;
-	public static String strPlayerIP = "132.205.93.29";
+	public static String strPlayerIP = "132.205.93.41";
 	public static int intPlayerPort = 1234;
-	public static String strComputerIP = "132.205.93.19";
+	public static String strComputerIP = "132.205.93.36";
 	public static int intComputerPort = 1236;
 	public static boolean isComputerTurn = false;
 	public static String strUserFile = "src\\User.txt";
 
-	public static void main(String[] args) throws IOException, ClassNotFoundException {
+	/**
+	 * Server will start and ready to receive the request from clients(Players).
+	 * 
+	 * @param args
+	 *            arguments for main method
+	 * @throws IOException
+	 *             Input output Exception
+	 * @throws ClassNotFoundException
+	 *             Class not found exception
+	 * @throws userAlreadyExistExc
+	 * @throws allShipPlacedCorrectlyExc
+	 * @throws nullSerializedResponseExc
+	 * @throws fileNotExistExc
+	 */
+	public static void main(String[] args) throws IOException, ClassNotFoundException, userAlreadyExistExc,
+			allShipPlacedCorrectlyExc, nullSerializedResponseExc, fileNotExistExc {
 		// TODO Auto-generated method stub
 		// 172.30.15.203
 		bfPlayer = new BattleFieldPlayer("");
@@ -47,23 +62,28 @@ public class Server {
 			ds.receive(request);
 			ServerData sd = (ServerData) deserialize(request.getData());
 			doOperation(sd, request, ds);
-			// Data dt=(Data) deserialize(request.getData());
 			System.out.println(sd.intPlayerId + "in server");
-			// System.out.println(new String(buffer) + " " + sd.intPlayerId + " " +
-			// sd.intOperationId);
-			// byte buf[] = null;
-			// buf = ("Hi Everyone").getBytes();
-			//
-			// DatagramPacket DpSend = new DatagramPacket(buf, buf.length, ip, 1235);
-			//
-			// ds.send(DpSend);
 		}
-		// ds.close();
 	}
 
-	private static void doOperation(ServerData sd, DatagramPacket dp, DatagramSocket ds) throws IOException {
-		// TODO Auto-generated method stub
-		// DatagramSocket ds = new DatagramSocket(intServerPort);
+	/**
+	 * This method will recognize the operation id and do the required operation of
+	 * received request and send the response back to the client(s).
+	 * 
+	 * @param sd
+	 *            Object of ServerData class.
+	 * @param dp
+	 *            Object of DatagramPacket.
+	 * @param ds
+	 *            Object of DatagramSocket.
+	 * @throws IOException
+	 * @throws userAlreadyExistExc
+	 * @throws allShipPlacedCorrectlyExc
+	 * @throws nullSerializedResponseExc
+	 * @throws fileNotExistExc
+	 */
+	private static void doOperation(ServerData sd, DatagramPacket dp, DatagramSocket ds) throws IOException,
+			userAlreadyExistExc, allShipPlacedCorrectlyExc, nullSerializedResponseExc, fileNotExistExc {
 		int intOperationId = sd.intOperationId;
 		System.out.println("operation ID : " + intOperationId);
 		ServerData sdTemp = null;
@@ -71,8 +91,7 @@ public class Server {
 		boolean boolReply = false;
 		switch (intOperationId) {
 		case 1:// onDiscartGame
-				// bfPlayer = new BattleFieldPlayer();
-				// bfComputer = new BattleFieldComputer();
+
 			System.out.println("case 1 Server");
 			sdTemp = new ServerData(sd.intPlayerId, intOperationId, true);
 			break;
@@ -82,6 +101,9 @@ public class Server {
 			System.out.println("all Valid Position:" + boolReply);
 			sdTemp = new ServerData(sd.intPlayerId, intOperationId, boolReply, bfPlayer.intScore, bfComputer.intScore,
 					bfPlayer.intTotalAliveShips, bfComputer.intTotalAliveShips, '\0', -1, -1, false);
+			if (!boolReply) {
+				throw new allShipPlacedCorrectlyExc("All ships are not placed Correctly");
+			}
 			break;
 		case 3:// startGame //send reply to both
 			System.out.println("case 3 Server");
@@ -112,8 +134,10 @@ public class Server {
 			boolReply = doSetShip(sd);
 			sdTemp = new ServerData(sd.intPlayerId, intOperationId, boolReply, bfPlayer.intScore, bfComputer.intScore,
 					bfPlayer.intTotalAliveShips, bfComputer.intTotalAliveShips, '\0', -1, -1, false);
-			if (sdTemp == null)
+			if (sdTemp == null) {
 				System.out.println("it is null");
+				throw new nullSerializedResponseExc("Response to client is null serialized");
+			}
 			break;
 		case 10:// save game
 			System.out.println("case 12 Server");
@@ -136,12 +160,8 @@ public class Server {
 					reloadParameters(saveAndLoad);
 					String str1 = "";
 					String str0 = "";
-					char arr1[] = new char[100];
-					char arr0[] = new char[100];
 					for (int i = 0; i < 10; i++) {
 						for (int j = 0; j < 10; j++) {
-							// arr1[(i * 10) + j] = bfPlayer.gameBoard.get(i).get(j).getCharOccupiedFor();
-							// arr0[(i * 10) + j] = bfComputer.gameBoard.get(i).get(j).getCharOccupiedFor();
 							System.out.println(i + "," + j);
 							str1 += bfPlayer.gameBoard.get(i).get(j).getCharOccupiedFor();
 							str0 += bfComputer.gameBoard.get(i).get(j).getCharOccupiedFor();
@@ -153,18 +173,6 @@ public class Server {
 							bfPlayer.intScore, bfComputer.intTotalAliveShips, bfPlayer.intTotalAliveShips, true);
 					sdTemp.isSalva = bfPlayer.isSalva;
 					sdTemp0.isSalva = bfPlayer.isSalva;
-					// if (bfPlayer.strUserName.equals(saveAndLoad.strUser1)
-					// && bfComputer.strUserName.equals(saveAndLoad.strUser0)) {
-					//
-					// sdTemp = new ServerData(sd.intPlayerId, intOperationId, arr1,arr0, true);
-					// sdTemp0 = new ServerData(sd.intPlayerId, intOperationId, arr0,arr1, true);
-					// } else if (bfPlayer.strUserName.equals(saveAndLoad.strUser0)
-					// && bfComputer.strUserName.equals(saveAndLoad.strUser1)) {
-					// sdTemp = new ServerData(sd.intPlayerId, intOperationId,
-					// saveAndLoad.mapShipLocation0, true);
-					// sdTemp0 = new ServerData(sd.intPlayerId, intOperationId,
-					// saveAndLoad.mapShipLocation1, true);
-					// }
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -182,17 +190,10 @@ public class Server {
 			if (!checkForUserExist(sd.strUname, sd.strPass)) {
 				System.out.println(" not exist");
 				makeNewUserInFile(sd.strUname, sd.strPass);
-				// sdTemp = new ServerData(sd.intPlayerId, intOperationId,
-				// bfPlayer.strUserName.trim() == "" ? false : true,
-				// bfComputer.strUserName.trim() == "" ? false : true, false);
 
+			} else {
+				throw new userAlreadyExistExc("Game Discarded");
 			}
-			// else {
-			//
-			// System.out.println("not exist");
-			// intOperationId = 1000;
-			// // sdTemp = new ServerData(sd.intPlayerId, intOperationId, "", "", false);
-			// }
 			setUserName(sd);
 			sdTemp = new ServerData(sd.intPlayerId, intOperationId, sd.strUname, "");
 			break;
@@ -241,10 +242,18 @@ public class Server {
 				}
 			}
 		}
-		// ds.close();
 	}
 
-	private static void makeNewUserInFile(String strUserName, String strPassWord) {
+	/**
+	 * This method will make a entry of user name and password of new user in
+	 * User.txt.
+	 * 
+	 * @param strUserName
+	 *            User name of the user who's entry need to be wrote in text file.
+	 * @param strPassWord
+	 *            Password of the user who's entry need to be wrote in text file.
+	 */
+	public static void makeNewUserInFile(String strUserName, String strPassWord) {
 		// TODO Auto-generated method stub
 		try {
 			// TODO Auto-generated method stub
@@ -258,8 +267,16 @@ public class Server {
 		}
 	}
 
-	private static void setUserName(ServerData sd) {
+	/**
+	 * This method get a user name from ServerData object and set it as a player's
+	 * user name.
+	 * 
+	 * @param sd
+	 *            Object of ServerData class
+	 */
+	public static void setUserName(ServerData sd) {
 		// TODO Auto-generated method stub
+		System.out.println(sd.strUname);
 		if (sd.intPlayerId == 1)
 			bfPlayer.strUserName = sd.strUname;
 		else
@@ -267,13 +284,25 @@ public class Server {
 
 	}
 
-	private static boolean checkForUserExist(String strUserName, String strPassWord) {
+	/**
+	 * This method will check that the user is exist or a new user.
+	 * 
+	 * @param strUserName
+	 *            User name of a player.
+	 * @param strPassWord
+	 *            Password of a player.
+	 * @return Returns true if user is exist else returns false.
+	 * @throws fileNotExistExc
+	 */
+	public static boolean checkForUserExist(String strUserName, String strPassWord) throws fileNotExistExc {
 		// TODO Auto-generated method stub
 		File file = new File(strUserFile);
 		Scanner sc;
 		try {
-			if (!file.exists())
+			if (!file.exists()) {
 				file.createNewFile();
+				throw new fileNotExistExc("File not Exist on given location");
+			}
 			sc = new Scanner(file);
 			while (sc.hasNextLine()) {
 				String strLine = sc.nextLine();
@@ -290,6 +319,12 @@ public class Server {
 		return false;
 	}
 
+	/**
+	 * This method will create a file name from names of both players.
+	 * Format:"_Player1_Player2"
+	 * 
+	 * @return Returns string of file name.
+	 */
 	private static String getFileName() {
 		// TODO Auto-generated method stub
 		TreeMap<String, Integer> treeMapTemp = new TreeMap<>();
@@ -302,6 +337,12 @@ public class Server {
 		return str + ".txt";
 	}
 
+	/**
+	 * This method will take data from class object and set them as current values.
+	 * 
+	 * @param saveAndLoad
+	 *            Object of SaveAndLoadData class.
+	 */
 	private static void reloadParameters(SaveAndLoadData saveAndLoad) {
 		// TODO Auto-generated method stub
 
@@ -351,6 +392,10 @@ public class Server {
 
 	}
 
+	/**
+	 * This Method will save a state of a game at this moment in
+	 * _player1_player2.txt file.
+	 */
 	private static void doSaveGame() {
 		// TODO Auto-generated method stub
 		SaveAndLoadData saveAndLoad = new SaveAndLoadData(bfPlayer.strUserName, bfComputer.strUserName,
@@ -389,21 +434,30 @@ public class Server {
 			}
 		}
 	}
-private static void getName() {
-	String str="PlayerID";
-	if(str.equalsIgnoreCase("PlayerID")) {
-		for(int i=0;i<10;i++) {
-			for(int j=0;j<10;j++) {
-				System.out.println(str+":"+i+","+j);
-			}
-		}
-	}
-}
+
+	/**
+	 * It will set a turn of computer player.
+	 * 
+	 * @param sd
+	 *            Object of ServerData class.
+	 */
 	private static void setTurn(ServerData sd) {
 		// TODO Auto-generated method stub
 		isComputerTurn = sd.isComputerTurn;
 	}
 
+	/**
+	 * 
+	 * @param sd
+	 *            Object of ServerData class.
+	 * @return Returns 1 if both players are ready to play on same mode of the
+	 *         game(Normal/Salva)<br>
+	 *         Returns 2 if other player is ready to play but on salva mode which
+	 *         different from player1<br>
+	 *         Returns 3 if other player is ready to play but on Normal mode which
+	 *         different from player1<br>
+	 *         Returns 4 If other player is not ready to play
+	 */
 	private static int wantToStartGame(ServerData sd) {
 		// TODO Auto-generated method stub
 		if (sd.intPlayerId == 1) {
@@ -440,6 +494,13 @@ private static void getName() {
 
 	}
 
+	/**
+	 * This method will set the ship.
+	 * 
+	 * @param sd
+	 *            Object of ServerData class.
+	 * @return Returns true if ship set successfully else returns false
+	 */
 	private static boolean doSetShip(ServerData sd) {
 		// TODO Auto-generated method stub
 		if (sd.intPlayerId == 1) {
@@ -455,6 +516,12 @@ private static void getName() {
 		}
 	}
 
+	/**
+	 * This method will add the ships in data structure;
+	 * 
+	 * @param sd
+	 *            Object of ServerData class
+	 */
 	private static void doAddShip(ServerData sd) {
 		// TODO Auto-generated method stub
 		if (sd.intPlayerId == 1)
@@ -463,6 +530,13 @@ private static void getName() {
 			bfComputer.addShip(sd.size, sd.x, sd.y, sd.endX, sd.endY, sd.isDestroyed, sd.isRotated);
 	}
 
+	/**
+	 * This method will check the hit is successful or not
+	 * 
+	 * @param sd
+	 *            Object of ServerData class
+	 * @return Returns object which contains couple of details
+	 */
 	private static ServerData checkIsHit(ServerData sd) {
 		// TODO Auto-generated method stub
 		if (sd.intPlayerId == 1) {
@@ -472,6 +546,13 @@ private static void getName() {
 		}
 	}
 
+	/**
+	 * This method will check that is all ships have correct position of not.
+	 * 
+	 * @param sd
+	 *            Object of ServerData class
+	 * @return Returns true if all ships having correct position
+	 */
 	private static boolean checkAllValidPositions(ServerData sd) {
 		// TODO Auto-generated method stub
 		if (sd.intPlayerId == 1) {
@@ -487,15 +568,15 @@ private static void getName() {
 		}
 	}
 
-	// private static void initializeObjects(ServerData sd) {
-	// // TODO Auto-generated method stub
-	// System.out.println("initializing object");
-	// if (sd.intPlayerId == 1)
-	// bfPlayer = new BattleFieldPlayer();
-	// else
-	// bfComputer = new BattleFieldComputer();
-	// }
-
+	/**
+	 * This method will serialize the object
+	 * 
+	 * @param obj
+	 *            Object which need to be serialized
+	 * @return Returns serialized byte array
+	 * @throws IOException
+	 *             input output exception
+	 */
 	public static byte[] serialize(Object obj) throws IOException {
 		try (ByteArrayOutputStream b = new ByteArrayOutputStream()) {
 			try (ObjectOutputStream o = new ObjectOutputStream(b)) {
@@ -505,6 +586,17 @@ private static void getName() {
 		}
 	}
 
+	/**
+	 * This method will deserialize the byte array
+	 * 
+	 * @param bytes
+	 *            Byte array which need to be deserialized
+	 * @return Returns deserialized object
+	 * @throws IOException
+	 *             input output exception
+	 * @throws ClassNotFoundException
+	 *             Class not found exception
+	 */
 	public static Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
 		try (ByteArrayInputStream b = new ByteArrayInputStream(bytes)) {
 			try (ObjectInputStream o = new ObjectInputStream(b)) {
