@@ -312,5 +312,12 @@
       <Text layoutX="536.0" layoutY="375.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player's Score" />
       <Text layoutX="536.0" layoutY="216.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Computer's alive ships left" />
       <Text layoutX="536.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Computer's Score" />
+      <TextArea fx:id="taServerMessage" layoutX="14.0" layoutY="179.0" prefHeight="106.0" prefWidth="200.0" wrapText="true">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </TextArea>
+      <Text fill="#ee0606" layoutX="19.0" layoutY="162.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Message From Server" />
+      <Button fx:id="discardGame" layoutX="16.0" layoutY="304.0" mnemonicParsing="false" onAction="#onDiscartGame" text="Discard Game" />
     </children>
 </AnchorPane>

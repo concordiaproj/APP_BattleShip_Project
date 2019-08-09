@@ -1,24 +1,34 @@
 package application.Controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
-import application.Models.BattleFieldComputer;
-import application.Models.BattleFieldPlayer;
-import application.Models.DataCoordinates;
-import application.Models.Ship2;
+//import application.Models.Data;
+import application.Models.ServerData;
 import application.Models.ShipLatestLocation;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
@@ -37,8 +47,8 @@ import javafx.scene.shape.Rectangle;
  *
  */
 public class Main implements Initializable {
-	public static BattleFieldPlayer bfPlayer;
-	public static BattleFieldComputer bfComputer;
+	// public static BattleFieldPlayer bfPlayer;
+	// public static BattleFieldComputer bfComputer;
 	private double CELL_SIZE = 30.0;
 	private boolean boolIsClicked = false;
 	private boolean boolIsRequiredToRotate = true;
@@ -49,7 +59,9 @@ public class Main implements Initializable {
 	public int intNoOfTurns = 1;
 	private long longTime = System.currentTimeMillis();
 	public static List<Rectangle> lstNodeToSelect = new ArrayList<>();
-	private HashMap<Node, ShipLatestLocation> mapShipLocation = new HashMap<>();
+	private HashMap<String, ShipLatestLocation> mapShipLocation = new HashMap<>();
+	public static String strServerIp = "132.205.93.29";
+	public static int intServerPort = 1235;
 
 	@FXML
 	private Rectangle ship1;
@@ -72,6 +84,8 @@ public class Main implements Initializable {
 	@FXML
 	private Button aboutButton;
 	@FXML
+	private Button discardGame;
+	@FXML
 	private RadioButton rbNormal;
 	@FXML
 	private RadioButton rbSalva;
@@ -83,6 +97,8 @@ public class Main implements Initializable {
 	private TextArea taShipCntComputer;
 	@FXML
 	private TextArea taShipCntPlayer;
+	@FXML
+	private TextArea taServerMessage;
 
 	/**
 	 * This method id initialization point of the application.
@@ -92,12 +108,10 @@ public class Main implements Initializable {
 	 */
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
-		bfPlayer = new BattleFieldPlayer(gpPlayer);
-		bfComputer = new BattleFieldComputer(gpComputer);
-		taComputerScore.setText("00");
-		taPlayerScore.setText("00");
-		taShipCntComputer.setText("0");
-		taShipCntPlayer.setText("0");
+
+		// // Data dt=new Data(1,1,gpPlayer);
+		// // sendMessageToServerTemp(dt);
+
 		setUpUI();
 	}
 
@@ -106,12 +120,35 @@ public class Main implements Initializable {
 	 * 
 	 */
 	public void setUpUI() {
+		// Alert alert = new Alert(AlertType.INFORMATION);
+		// alert.setTitle("Information Dialog");
+		// alert.setHeaderText(null);
+		// alert.setContentText("Good Morning");
+		// Optional<ButtonType> result = alert.showAndWait();
+		// if (result.get() == ButtonType.OK) {
+		// // System.exit(0);
+		// }
 		startButton.disableProperty().set(true);
 
 		currentShip = ship1;
 
-		setPlayerGridResponding(bfPlayer);
-
+		setPlayerGridResponding();
+		new Thread(() -> {
+			try {
+				try {
+					UDPListening();
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}).start();
 		eventsForShips(ship1);
 		eventsForShips(ship2);
 		eventsForShips(ship3);
@@ -121,13 +158,29 @@ public class Main implements Initializable {
 			Rectangle rect = (Rectangle) node;
 			rect.setDisable(true);
 		}
+		taPlayerScore.clear();
+		// Thread.sleep(50);
+		taPlayerScore.setText("00");
+		// Thread.sleep(50);
+		taComputerScore.clear();
+		// Thread.sleep(50);
+		taComputerScore.setText("00");
+		// Thread.sleep(50);
+		taShipCntPlayer.clear();
+		// Thread.sleep(50);
+		taShipCntPlayer.setText("0");
+		// Thread.sleep(50);
+		taShipCntComputer.clear();
+		// Thread.sleep(50);
+		taShipCntComputer.setText("0");
 	}
 
 	/**
 	 * This method sets up all mouse events on the ship which is passed as a
 	 * parameter.
 	 * 
-	 * @param ndShip Ship on which all mouse event going to be set.
+	 * @param ndShip
+	 *            Ship on which all mouse event going to be set.
 	 */
 	private void eventsForShips(Node ndShip) {
 
@@ -152,43 +205,57 @@ public class Main implements Initializable {
 				int size = (int) ((int) currentShip.getWidth() / CELL_SIZE);
 				int x = (int) (localX / CELL_SIZE);
 				int y = (int) (localY / CELL_SIZE);
-				Ship2 shipToRemove = null;
-				for (Ship2 ship : bfPlayer.lstShip) {
-					if (ship.getSX() == x && ship.getSY() == y) {
-						shipToRemove = ship;
-						for (int i = shipToRemove.getSX(); i <= shipToRemove.getEX(); i++) {
-							for (int j = shipToRemove.getSY(); j <= shipToRemove.getEY(); j++) {
-								bfPlayer.gameBoard.get(i).get(j).setShip(null);
-							}
-						}
-						if (shipToRemove != null) {
-							if (true) {// if (removeShip.getIsSet()) {
-								if (!isRotated) {
-									if (gpPlayer.contains(localX, localY)) {
-										for (int i = 0; i < size && i <= 9 - x; i++) {
-											Rectangle r = (Rectangle) bfPlayer.getBlockNode(x + i, y);
-											r.setFill(Color.BLACK);
-										}
-
-									}
-								}
-								if (isRotated) {
-									if (gpPlayer.contains(localX, localY)) {
-										for (int i = 0; i < size && i <= 9 - y; i++) {
-											Rectangle r = (Rectangle) bfPlayer.getBlockNode(x, y + i);
-											r.setFill(Color.BLACK);
-										}
-
-									}
-								}
-							}
-						}
-					}
+				try {
+					// DatagramSocket ds = new DatagramSocket();
+					// InetAddress ip = InetAddress.getByName(strServerIp);
+					ServerData sd = new ServerData(1, 9, x, y);
+					sendMessageToServer(sd);
+					// byte buf[] = null;
+					// buf = (serialize(sd));
+					// DatagramPacket DpSend = new DatagramPacket(buf, buf.length, ip, 1236);
+					//
+					// ds.send(DpSend);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-
-				if (bfPlayer.lstShip.remove(shipToRemove)) {
-					startButton.disableProperty().set(true);
-				}
+				// Ship2 shipToRemove = null;
+				// for (Ship2 ship : bfPlayer.lstShip) {
+				// if (ship.getSX() == x && ship.getSY() == y) {
+				// shipToRemove = ship;
+				// for (int i = shipToRemove.getSX(); i <= shipToRemove.getEX(); i++) {
+				// for (int j = shipToRemove.getSY(); j <= shipToRemove.getEY(); j++) {
+				// bfPlayer.gameBoard.get(i).get(j).setShip(null);
+				// }
+				// }
+				// if (shipToRemove != null) {
+				// if (true) {// if (removeShip.getIsSet()) {
+				// if (!isRotated) {
+				// if (gpPlayer.contains(localX, localY)) {
+				// for (int i = 0; i < size && i <= 9 - x; i++) {
+				// Rectangle r = (Rectangle) bfPlayer.getBlockNode(x + i, y);
+				// r.setFill(Color.BLACK);
+				// }
+				//
+				// }
+				// }
+				// if (isRotated) {
+				// if (gpPlayer.contains(localX, localY)) {
+				// for (int i = 0; i < size && i <= 9 - y; i++) {
+				// Rectangle r = (Rectangle) bfPlayer.getBlockNode(x, y + i);
+				// r.setFill(Color.BLACK);
+				// }
+				//
+				// }
+				// }
+				// }
+				// }
+				// }
+				// }
+				//
+				// if (bfPlayer.lstShip.remove(shipToRemove)) {
+				// startButton.disableProperty().set(true);
+				// }
 				ndShip.setCursor(Cursor.MOVE);
 			}
 		});
@@ -245,9 +312,10 @@ public class Main implements Initializable {
 	 * <li>Click event after game started</li>
 	 * </ul>
 	 * 
-	 * @param bfComputerParam Object of the computer grid.
+	 * @param bfComputerParam
+	 *            Object of the computer grid.
 	 */
-	void setComputerGridResponding(BattleFieldComputer bfComputerParam) {
+	void setComputerGridResponding() {
 		for (Node node : gpComputer.getChildren()) {
 			Rectangle rect = (Rectangle) node;
 			rect.disableProperty().set(false);
@@ -266,33 +334,56 @@ public class Main implements Initializable {
 					lstNodeToSelect.add(r);
 					System.out.println("list size : " + lstNodeToSelect.size() + ", intNo of tuerns : " + intNoOfTurns);
 					if (lstNodeToSelect.size() == intNoOfTurns) {
-						long t = ((System.currentTimeMillis() - longTime) / 1000);
-						if (t == 0)
-							t = 1;
-						bfPlayer.intScore += (int) (60 / t);
-						taPlayerScore.clear();
-						taPlayerScore.setText(bfPlayer.intScore + "");
-						for (int i = 0; i < lstNodeToSelect.size(); i++) {
-							GridPane g = (GridPane) lstNodeToSelect.get(i).getParent();
+						// long t = ((System.currentTimeMillis() - longTime) / 1000);
+						// if (t == 0)
+						// t = 1;
+						// bfPlayer.intScore += (int) (60 / t);
+						// taPlayerScore.clear();
+						// taPlayerScore.setText(bfPlayer.intScore + "");
+						// for (int i = 0; i < lstNodeToSelect.size(); i++) {
+						while (lstNodeToSelect.size() > 0) {
+							GridPane g = (GridPane) lstNodeToSelect.get(0).getParent();
 
-							int intY = GridPane.getColumnIndex(lstNodeToSelect.get(i));// y
-							int intX = GridPane.getRowIndex(lstNodeToSelect.get(i));// x
-							if (bfComputer.isHit(intX, intY, boolIsSalvaVariation, lstNodeToSelect.get(i), i)) {
-								taShipCntComputer.clear();
-								taShipCntComputer.setText(bfComputer.intTotalAliveShips + "");
-								taPlayerScore.clear();
-								taPlayerScore.setText(bfPlayer.intScore + "");
-								return;
+							int intY = GridPane.getColumnIndex(lstNodeToSelect.get(0));// y
+							int intX = GridPane.getRowIndex(lstNodeToSelect.get(0));// x
+							try {
+								// DatagramSocket ds = new DatagramSocket();
+								// InetAddress ip = InetAddress.getByName(strServerIp);
+								ServerData sd = new ServerData(1, 5, intX, intY, boolIsSalvaVariation, 0);
+								sendMessageToServer(sd);
+								// byte buf[] = null;
+								// buf = (serialize(sd));
+								// DatagramPacket DpSend = new DatagramPacket(buf, buf.length, ip, 1236);
+								//
+								// ds.send(DpSend);
+							} catch (IOException e) {
+								e.printStackTrace();
 							}
+							// if (bfComputer.isHit(intX, intY, boolIsSalvaVariation,
+							// lstNodeToSelect.get(i), i)) {
+							// taShipCntComputer.clear();
+							// taShipCntComputer.setText(bfComputer.intTotalAliveShips + "");
+							// taPlayerScore.clear();
+							// taPlayerScore.setText(bfPlayer.intScore + "");
+							// return;
+							// }
 
-							taShipCntComputer.clear();
-							taShipCntComputer.setText(bfComputer.intTotalAliveShips + "");
-							taPlayerScore.clear();
-							taPlayerScore.setText(bfPlayer.intScore + "");
+							// taShipCntComputer.clear();
+							// taShipCntComputer.setText(bfComputer.intTotalAliveShips + "");
+							// taPlayerScore.clear();
+							// taPlayerScore.setText(bfPlayer.intScore + "");
+							lstNodeToSelect.remove(0);
 						}
 
-						lstNodeToSelect.clear();
-						boolIsComputerTurn = true;
+						// lstNodeToSelect.clear();
+						ServerData sd = new ServerData(1, 6, true, false);
+						try {
+							sendMessageToServer(sd);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						// boolIsComputerTurn = true;
 						longTime = System.currentTimeMillis();
 					} else
 						return;
@@ -310,9 +401,9 @@ public class Main implements Initializable {
 	 * 
 	 * @param bfPlayerParam
 	 */
-	void setPlayerGridResponding(BattleFieldPlayer bfPlayerParam) {
+	void setPlayerGridResponding() {
 		anchorPane.setOnMouseDragged(new EventHandler<MouseEvent>() {
-//
+			//
 			@Override
 			public void handle(MouseEvent event) {
 
@@ -328,16 +419,36 @@ public class Main implements Initializable {
 
 						int size = (int) ((int) currentShip.getWidth() / CELL_SIZE);
 						ShipLatestLocation sll = new ShipLatestLocation(localX, localY, size, isRotated);
-						mapShipLocation.put(n, sll);
-						if (bfPlayer.allValidPositions(mapShipLocation))
-							startButton.disableProperty().set(false);
-						else
-							startButton.disableProperty().set(true);
+						mapShipLocation.put(n.getId(), sll);
+						try {
+							// DatagramSocket ds = new DatagramSocket();
+							// InetAddress ip = InetAddress.getByName(strServerIp);
+							ServerData sd = new ServerData(1, 2, mapShipLocation);
+							sendMessageToServer(sd);
+							// byte buf[] = null;
+							// buf = (serialize(sd));
+							// DatagramPacket DpSend = new DatagramPacket(buf, buf.length, ip, 1236);
+							//
+							// ds.send(DpSend);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+
+						// if (bfPlayer.allValidPositions(mapShipLocation))
+						// startButton.disableProperty().set(false);
+						// else
+						// startButton.disableProperty().set(true);
 						if (gpPlayer.contains(localX, localY)) {
 							int x = (int) (localX / CELL_SIZE);
 							int y = (int) (localY / CELL_SIZE);
 
-							Rectangle r = (Rectangle) bfPlayer.getBlockNode(x, y);
+							Rectangle r = null;
+							for (Node nd : gpPlayer.getChildren()) {
+								if (nd != null) {
+									if (GridPane.getRowIndex(nd) == x && GridPane.getColumnIndex(nd) == y)
+										r = (Rectangle) nd;
+								}
+							}
 							int endX, endY;
 							if (isRotated) {
 								System.out.println("is rotated");
@@ -368,7 +479,8 @@ public class Main implements Initializable {
 	/**
 	 * This Method set the border on selected ship.
 	 * 
-	 * @param rectSlected A ship to which the border will be set.
+	 * @param rectSlected
+	 *            A ship to which the border will be set.
 	 * @return Returns rectangle object of ship which is currently selected.
 	 */
 	private Rectangle getSelectedRectangle(Rectangle rectSlected) {
@@ -386,17 +498,28 @@ public class Main implements Initializable {
 	 * This Method will call on click on 'StartGame' button<br>
 	 * This method will store all placed ship on both the players' grids.
 	 * 
-	 * @param event Take the click event on 'StartGame' Button.
+	 * @param event
+	 *            Take the click event on 'StartGame' Button.
+	 * @throws IOException
 	 */
 	@FXML
-	private void onGameStart(ActionEvent event) {
-//    	System.out.println("after start:"+ship1.getLayoutX());
-		for (Node n : mapShipLocation.keySet()) {
+	private void onGameStart(ActionEvent event) throws IOException {
+		// System.out.println("after start:"+ship1.getLayoutX());
+
+		// test();
+
+		for (String n : mapShipLocation.keySet()) {
 			ShipLatestLocation sll = mapShipLocation.get(n);
 			if (gpPlayer.contains(sll.intLocalX, sll.intLocalY)) {
 				int x = (int) (sll.intLocalX / CELL_SIZE);
 				int y = (int) (sll.intLocalY / CELL_SIZE);
-				Rectangle r = (Rectangle) bfPlayer.getBlockNode(x, y);
+				Rectangle r = null;
+				for (Node nd : gpPlayer.getChildren()) {
+					if (nd != null) {
+						if (GridPane.getRowIndex(nd) == x && GridPane.getColumnIndex(nd) == y)
+							r = (Rectangle) nd;
+					}
+				}
 				int endX = x, endY = y;
 				if (!sll.boolIsRotated) {// ***
 					endX = x;
@@ -406,16 +529,25 @@ public class Main implements Initializable {
 					endY = y;
 				}
 				System.out.println("x,y : endx,endy" + x + "," + y + " : " + endX + "," + endY);
-				Ship2 ship = new Ship2(sll.size, x, y, endX, endY, false);
-				ship.setShipCoord();
-				bfPlayer.addShip(ship, sll.boolIsRotated);
-				bfPlayer.lstShip.add(ship);
+				// Ship2 ship = new Ship2(sll.size, x, y, endX, endY, false);
+				// ship.setShipCoord();
+				// bfPlayer.addShip(ship, sll.boolIsRotated);
+				// bfPlayer.lstShip.add(ship);
+				// DatagramSocket ds = new DatagramSocket();
+				// InetAddress ip = InetAddress.getByName(strServerIp);
+				ServerData sd = new ServerData(1, 4, sll.size, x, y, endX, endY, false, sll.boolIsRotated);
+				sendMessageToServer(sd);
+				// byte buf[] = null;
+				// buf = (serialize(sd));
+				// DatagramPacket DpSend = new DatagramPacket(buf, buf.length, ip, 1236);
+				//
+				// ds.send(DpSend);
 			}
 		}
-		taShipCntPlayer.clear();
-		taShipCntPlayer.setText("5");
-		taShipCntComputer.clear();
-		taShipCntComputer.setText("5");
+		// taShipCntPlayer.clear();
+		// taShipCntPlayer.setText("5");
+		// taShipCntComputer.clear();
+		// taShipCntComputer.setText("5");
 		System.out.println("Normal : " + rbNormal.isSelected());
 		System.out.println("Salva : " + rbSalva.isSelected());
 		if (rbSalva.isSelected()) {
@@ -423,27 +555,231 @@ public class Main implements Initializable {
 			intNoOfTurns = 5;
 		}
 
-		for (Node node : anchorPane.getChildren()) {
-			node.setOnMouseClicked(null);
-			node.setOnMouseDragged(null);
-			node.setOnMouseReleased(null);
-			node.setOnMousePressed(null);
-			node.setOnMouseEntered(null);
-		}
-		anchorPane.setOnMouseReleased(null);
-		anchorPane.setOnMouseDragged(null);
-		bfComputer.deployComputerShips();
-		setComputerGridResponding(bfComputer);
-		new Thread(() -> {
-			try {
-				makeReadyComputerToPlay();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}).start();
+		// DatagramSocket ds = new DatagramSocket();
+		// InetAddress ip = InetAddress.getByName(strServerIp);
+		ServerData sd = new ServerData(1, 3, boolIsSalvaVariation);
+		sendMessageToServer(sd);
+		taShipCntPlayer.clear();
+		taShipCntPlayer.setText("5");
+		taShipCntComputer.clear();
+		taShipCntComputer.setText("5");
+		// byte buf[] = null;
+		// buf = (serialize(sd));
+		// DatagramPacket DpSend = new DatagramPacket(buf, buf.length, ip, 1236);
+		//
+		// ds.send(DpSend);
 
-		startButton.disableProperty().set(true);
+		// for (Node node : anchorPane.getChildren()) {
+		// node.setOnMouseClicked(null);
+		// node.setOnMouseDragged(null);
+		// node.setOnMouseReleased(null);
+		// node.setOnMousePressed(null);
+		// node.setOnMouseEntered(null);
+		// }
+		// anchorPane.setOnMouseReleased(null);
+		// anchorPane.setOnMouseDragged(null);
+		//// bfComputer.deployComputerShips();
+		// setComputerGridResponding();
+		//// new Thread(() -> {
+		//// try {
+		//// makeReadyComputerToPlay();
+		//// } catch (InterruptedException e) {
+		//// // TODO Auto-generated catch block
+		//// e.printStackTrace();
+		//// }
+		//// }).start();
+		//
+		// startButton.disableProperty().set(true);
+
+	}
+
+	@FXML
+	private void onDiscartGame(ActionEvent event) throws IOException {
+		System.out.println("To discart game");
+		ServerData sd = new ServerData(1, 1, true);
+		sendMessageToServer(sd);
+	}
+
+	private void test() throws IOException {
+		// TODO Auto-generated method stub
+
+		// 172.30.111.12
+		// System.out.println(InetAddress.getLocalHost());
+		DatagramSocket ds = new DatagramSocket();
+		InetAddress ip = InetAddress.getByName(strServerIp);
+		ServerData sd = new ServerData(1, 1);
+		byte buf[] = null;
+		buf = (serialize(sd));
+		DatagramPacket DpSend = new DatagramPacket(buf, buf.length, ip, 1236);
+
+		ds.send(DpSend);
+	}
+
+	private void UDPListening() throws IOException, ClassNotFoundException, InterruptedException {
+		// TODO Auto-generated method stub
+		DatagramSocket ds = new DatagramSocket(1234);
+
+		DatagramPacket request = null;
+		while (true) {
+			byte[] buffer = new byte[1000];
+			request = new DatagramPacket(buffer, buffer.length);
+			// System.out.println("while..41");
+			ds.receive(request);
+			ServerData serverData = (ServerData) deserialize(request.getData());
+			// System.out.println(serverData.intOperationId);
+			// System.out.println(new String(buffer));
+			getResponse(serverData);
+		}
+	}
+
+	private void getResponse(ServerData serverData) throws InterruptedException {
+		// TODO Auto-generated method stub
+		System.out.println("IN GETRESPONSE");
+
+		int intOperationId = serverData.intOperationId;
+		switch (intOperationId) {
+		case 1:
+			if (serverData.intPlayerId == 1)
+				System.exit(0);
+			else {
+				Platform.runLater(() -> {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Information Dialog");
+					alert.setHeaderText(null);
+					alert.setContentText("Other Player Want To Discart A Game");
+					Optional<ButtonType> result = alert.showAndWait();
+					if (result.get() == ButtonType.OK) {
+						System.exit(0);
+					}
+				});
+			}
+		case 2:
+			if (serverData.boolReturn)
+				startButton.disableProperty().set(false);
+			else
+				startButton.disableProperty().set(true);
+			break;
+		case 3:
+			int reply = serverData.intReply;
+			if (reply == 1 || (reply == 4 && serverData.intPlayerId == 1)) {
+				for (Node node : anchorPane.getChildren()) {
+					node.setOnMouseClicked(null);
+					node.setOnMouseDragged(null);
+					node.setOnMouseReleased(null);
+					node.setOnMousePressed(null);
+					node.setOnMouseEntered(null);
+				}
+				anchorPane.setOnMouseReleased(null);
+				anchorPane.setOnMouseDragged(null);
+				// bfComputer.deployComputerShips();
+				setComputerGridResponding();
+				// new Thread(() -> {
+				// try {
+				// makeReadyComputerToPlay();
+				// } catch (InterruptedException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// }
+				// }).start();
+
+				startButton.disableProperty().set(true);
+			}
+			if (reply == 1) {
+				taServerMessage.clear();
+				taServerMessage.setText("You can Start Game");
+				//
+			} else if (reply == 2 && serverData.intPlayerId == 1) {
+
+				taServerMessage.clear();
+				taServerMessage.setText("Other Player Want to Play on Salva");
+			} else if (reply == 3 && serverData.intPlayerId == 1) {
+				taServerMessage.clear();
+				taServerMessage.setText("Other Player want to play on Normal");
+			} else if (reply == 4) {
+				taServerMessage.clear();
+				if (serverData.intPlayerId == 1) {
+
+					taServerMessage.setText("Wait for other player to be ready");
+				} else {
+					taServerMessage.setText("Other Player ready to start game");
+				}
+			}
+		case 5:
+			if (serverData.intPlayerId == 1) {
+				for (Node n : gpComputer.getChildren()) {
+					if (n != null) {
+						if (GridPane.getRowIndex(n) == serverData.x && GridPane.getColumnIndex(n) == serverData.y) {
+							Rectangle r = (Rectangle) n;
+							if (serverData.c == 'G')
+								r.setFill(Color.GREY);
+							else if (serverData.c == 'R')
+								r.setFill(Color.RED);
+						}
+					}
+				}
+			} else {
+				System.out.println("Computer's turn");
+				for (Node n : gpPlayer.getChildren()) {
+					if (n != null) {
+						if (GridPane.getRowIndex(n) == serverData.x && GridPane.getColumnIndex(n) == serverData.y) {
+							Rectangle r = (Rectangle) n;
+							if (serverData.c == 'G')
+								r.setFill(Color.GREY);
+							else if (serverData.c == 'R')
+								r.setFill(Color.RED);
+						}
+					}
+				}
+			}
+			System.out.println("line1-P");
+			taPlayerScore.clear();
+			Thread.sleep(100);
+			taPlayerScore.setText(serverData.intPlayerScore + "");
+			Thread.sleep(100);
+			taComputerScore.clear();
+			Thread.sleep(100);
+			taComputerScore.setText(serverData.intCompScore + "");
+			Thread.sleep(100);
+			taShipCntPlayer.clear();
+			Thread.sleep(100);
+			taShipCntPlayer.setText(serverData.intPlayerAliveShip + "");
+			Thread.sleep(100);
+			taShipCntComputer.clear();
+			Thread.sleep(100);
+			taShipCntComputer.setText(serverData.intCompAliveShip + "");
+
+			if (serverData.intPlayerId == 1 && serverData.isWinner) {
+				Platform.runLater(() -> {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Information Dialog");
+					alert.setHeaderText(null);
+					alert.setContentText("You Won !!");
+					Optional<ButtonType> result = alert.showAndWait();
+					if (result.get() == ButtonType.OK) {
+						System.exit(0);
+					}
+				});
+			}
+			if (serverData.intPlayerId == 0 && serverData.isWinner) {
+				Platform.runLater(() -> {
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Information Dialog");
+					alert.setHeaderText(null);
+					alert.setContentText("Other Player Won !!");
+					Optional<ButtonType> result = alert.showAndWait();
+					if (result.get() == ButtonType.OK) {
+						System.exit(0);
+					}
+				});
+			}
+			// gpComputer.rege
+			// System.out.println( "Restarting app!" );
+			// Battleship.stage.close();
+			// Platform.runLater( () -> new Battleship.start( new Stage() ) );
+			break;
+		case 6:
+			boolIsComputerTurn = serverData.isComputerTurn;
+		}
 
 	}
 
@@ -452,84 +788,127 @@ public class Main implements Initializable {
 	 * 
 	 * @throws InterruptedException
 	 */
-	private void makeReadyComputerToPlay() throws InterruptedException {
-		// TODO Auto-generated method stub
-		System.out.println("in ready computer" + boolIsComputerTurn);
-		int x, y;
-		Random rand = new Random();
-		int q = 1;
-		w1: while (true) {
-			System.out.print("");
-
-			if (boolIsComputerTurn) {
-				Thread.sleep((rand.nextInt(2) + 1) * 1000);
-
-				bfComputer.intScore += (int) (45 / ((System.currentTimeMillis() - longTime)) / 1000);
-				taComputerScore.clear();
-				taComputerScore.setText((bfComputer.intScore) + "");
-				System.out.println("hi" + boolIsComputerTurn);
-				List<DataCoordinates> lstBlocksToBeSelect = bfPlayer.getFromAIAlgorithm(intNoOfTurns);
-				System.out.println("---" + lstBlocksToBeSelect.size());
-
-				for (int i = 0; i < intNoOfTurns; i++) {
-					lstNodeToSelect.clear();
-					System.out.println("error4");
-					if (lstBlocksToBeSelect.size() > 0) {
-						x = lstBlocksToBeSelect.get(0).x;
-						y = lstBlocksToBeSelect.get(0).y;
-					} else {
-						x = rand.nextInt(10);
-						y = rand.nextInt(10);
-					}
-					System.out.println("error5:x,y" + x + "," + y);
-					Rectangle r = (Rectangle) bfPlayer.getBlockNode(x, y);
-					lstNodeToSelect.add(r);
-
-					if (bfPlayer.isHit(x, y, boolIsSalvaVariation, r, 0)) {
-						System.out.println("return true");
-						taShipCntPlayer.clear();
-						Thread.sleep(100);
-						taShipCntPlayer.setText(bfPlayer.intTotalAliveShips + "");
-						Thread.sleep(100);
-						taComputerScore.clear();
-						Thread.sleep(100);
-						taComputerScore.setText(bfComputer.intScore + "");
-						break;
-					} else {
-						if (!boolIsSalvaVariation) {
-							boolIsComputerTurn = false;
-						}
-					}
-					System.out.println("error3:size:" + lstBlocksToBeSelect.size());
-					if (lstBlocksToBeSelect.size() > 0) {
-						System.out.println("in if====");
-						lstBlocksToBeSelect.remove(0);
-					}
-					System.out.println("error2");
-					taShipCntPlayer.clear();
-					System.out.println("line1");
-					Thread.sleep(100);
-					taShipCntPlayer.setText(bfPlayer.intTotalAliveShips + "");
-					Thread.sleep(100);
-					System.out.println("line2");
-					taComputerScore.clear();
-					Thread.sleep(100);
-					System.out.println("line3");
-					taComputerScore.setText(bfComputer.intScore + "");
-					Thread.sleep(100);
-					System.out.println("line4");
-				}
-				lstNodeToSelect.clear();
-				if (boolIsSalvaVariation)
-					boolIsComputerTurn = false;
-				longTime = System.currentTimeMillis();
-			}
-		}
-	}
+	// private void makeReadyComputerToPlay() throws InterruptedException {
+	// // TODO Auto-generated method stub
+	// System.out.println("in ready computer" + boolIsComputerTurn);
+	// int x, y;
+	// Random rand = new Random();
+	// int q = 1;
+	// w1: while (true) {
+	// System.out.print("");
+	//
+	// if (boolIsComputerTurn) {
+	// Thread.sleep((rand.nextInt(2) + 1) * 1000);
+	//
+	// bfComputer.intScore += (int) (45 / ((System.currentTimeMillis() - longTime))
+	// / 1000);
+	// taComputerScore.clear();
+	// taComputerScore.setText((bfComputer.intScore) + "");
+	// System.out.println("hi" + boolIsComputerTurn);
+	// List<DataCoordinates> lstBlocksToBeSelect =
+	// bfPlayer.getFromAIAlgorithm(intNoOfTurns);
+	// System.out.println("---" + lstBlocksToBeSelect.size());
+	//
+	// for (int i = 0; i < intNoOfTurns; i++) {
+	// lstNodeToSelect.clear();
+	// System.out.println("error4");
+	// if (lstBlocksToBeSelect.size() > 0) {
+	// x = lstBlocksToBeSelect.get(0).x;
+	// y = lstBlocksToBeSelect.get(0).y;
+	// } else {
+	// x = rand.nextInt(10);
+	// y = rand.nextInt(10);
+	// }
+	// System.out.println("error5:x,y" + x + "," + y);
+	// Rectangle r = (Rectangle) bfPlayer.getBlockNode(x, y);
+	// lstNodeToSelect.add(r);
+	//
+	// if (bfPlayer.isHit(x, y, boolIsSalvaVariation, r, 0)) {
+	// System.out.println("return true");
+	// taShipCntPlayer.clear();
+	// Thread.sleep(100);
+	// taShipCntPlayer.setText(bfPlayer.intTotalAliveShips + "");
+	// Thread.sleep(100);
+	// taComputerScore.clear();
+	// Thread.sleep(100);
+	// taComputerScore.setText(bfComputer.intScore + "");
+	// break;
+	// } else {
+	// if (!boolIsSalvaVariation) {
+	// boolIsComputerTurn = false;
+	// }
+	// }
+	// System.out.println("error3:size:" + lstBlocksToBeSelect.size());
+	// if (lstBlocksToBeSelect.size() > 0) {
+	// System.out.println("in if====");
+	// lstBlocksToBeSelect.remove(0);
+	// }
+	// System.out.println("error2");
+	// taShipCntPlayer.clear();
+	// System.out.println("line1");
+	// Thread.sleep(100);
+	// taShipCntPlayer.setText(bfPlayer.intTotalAliveShips + "");
+	// Thread.sleep(100);
+	// System.out.println("line2");
+	// taComputerScore.clear();
+	// Thread.sleep(100);
+	// System.out.println("line3");
+	// taComputerScore.setText(bfComputer.intScore + "");
+	// Thread.sleep(100);
+	// System.out.println("line4");
+	// }
+	// lstNodeToSelect.clear();
+	// if (boolIsSalvaVariation)
+	// boolIsComputerTurn = false;
+	// longTime = System.currentTimeMillis();
+	// }
+	// }
+	// }
 
 	class Delta {
 		double x;
 		double y;
 
+	}
+
+	public static void sendMessageToServer(ServerData sd) throws IOException {
+		DatagramSocket ds = new DatagramSocket();
+		System.out.println("going to send to id : " + sd.intOperationId);
+		InetAddress ip = InetAddress.getByName(strServerIp);
+		byte buf[] = null;
+		buf = (serialize(sd));
+		DatagramPacket DpSend = new DatagramPacket(buf, buf.length, ip, intServerPort);
+
+		ds.send(DpSend);
+
+	}
+
+	public static void sendMessageToServerTemp(ServerData sd) throws IOException {
+		DatagramSocket ds = new DatagramSocket();
+		System.out.println("going to send to id : ");
+		InetAddress ip = InetAddress.getByName(strServerIp);
+		byte buf[] = null;
+		buf = (serialize(sd));
+		DatagramPacket DpSend = new DatagramPacket(buf, buf.length, ip, intServerPort);
+
+		ds.send(DpSend);
+
+	}
+
+	public static byte[] serialize(Object obj) throws IOException {
+		try (ByteArrayOutputStream b = new ByteArrayOutputStream()) {
+			try (ObjectOutputStream o = new ObjectOutputStream(b)) {
+				o.writeObject(obj);
+			}
+			return b.toByteArray();
+		}
+	}
+
+	public static Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
+		try (ByteArrayInputStream b = new ByteArrayInputStream(bytes)) {
+			try (ObjectInputStream o = new ObjectInputStream(b)) {
+				return o.readObject();
+			}
+		}
 	}
 }
