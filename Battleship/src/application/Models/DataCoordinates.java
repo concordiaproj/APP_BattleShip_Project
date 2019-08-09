@@ -1,20 +1,24 @@
 package application.Models;
 
+import java.io.Serializable;
+
 /**
  * @author Sahana
  * @author sanja
  * @author dhvaniagola
  *
  */
-public class DataCoordinates {
+public class DataCoordinates implements Serializable {
 	public int x;
 	public int y;
 
 	/**
 	 * This constructor set the (x,y) of each block of the grid
 	 * 
-	 * @param x x-Coordinate of block
-	 * @param y y-Coordinate of block
+	 * @param x
+	 *            x-Coordinate of block
+	 * @param y
+	 *            y-Coordinate of block
 	 * 
 	 */
 	public DataCoordinates(int x, int y) {

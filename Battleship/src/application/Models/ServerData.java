@@ -23,6 +23,9 @@ public class ServerData implements Serializable {
 	public int intReply = 0;
 	public boolean isComputerTurn = false;
 	public boolean isWinner = false;
+	public String strSelf = "";
+	public String strOther = "";
+	public boolean flag = false;
 
 	// public ServerData(int intPlayerId, int intOperationId) {
 	// this.intPlayerId = intPlayerId;
@@ -72,6 +75,20 @@ public class ServerData implements Serializable {
 		this.intPlayerId = intPlayerId;
 		this.intOperationId = intOperationId;
 		this.intReply = intReply;
+	}
+
+	// reply for reload game
+	public ServerData(int intPlayerId, int intOperationId, String strSelf, String strOther, int intPlayerScore,
+			int intCompScore, int intPlayerAliveShip, int intCompAliveShip, boolean flag) {
+		this.intPlayerId = intPlayerId;
+		this.intOperationId = intOperationId;
+		this.strSelf = strSelf;
+		this.strOther = strOther;
+		this.intPlayerScore = intPlayerScore;
+		this.intCompScore = intCompScore;
+		this.intPlayerAliveShip = intPlayerAliveShip;
+		this.intCompAliveShip = intCompAliveShip;
+		this.flag = flag;
 	}
 
 	// isHit

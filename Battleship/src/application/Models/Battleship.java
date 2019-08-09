@@ -17,6 +17,7 @@ import javafx.stage.Stage;
  *
  */
 public class Battleship extends Application {
+	public static Stage stage;
 
 	/**
 	 * 
@@ -32,6 +33,7 @@ public class Battleship extends Application {
 	 */
 	@Override
 	public void start(Stage stage) throws Exception {
+		this.stage = stage;
 		Parent root = FXMLLoader.load(getClass().getResource("/application/View/battleship.fxml"));
 
 		Scene scene = new Scene(root);

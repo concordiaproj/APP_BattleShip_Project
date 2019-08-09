@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import javafx.scene.layout.GridPane;
-
 /**
  * 
  * @author dhvaniagola
@@ -18,11 +16,12 @@ public class BattleFieldPlayer extends BattleFieldsParent {
 	/**
 	 * This constructor will set the initial value of each block of the grid.
 	 * 
-	 * @param gp Gridpane of Player
+	 * @param gp
+	 *            Gridpane of Player
 	 */
-//	public BattleFieldPlayer(GridPane gp) {
-	public BattleFieldPlayer() {
-//		super(gp);
+	// public BattleFieldPlayer(GridPane gp) {
+	public BattleFieldPlayer(String strUserName) {
+		super(strUserName);
 		// TODO Auto-generated constructor stub
 		this.id = 1;
 		for (int i = 0; i < 10; i++) {
@@ -39,7 +38,8 @@ public class BattleFieldPlayer extends BattleFieldsParent {
 	 * This method will calculate the coordinates such that computer will play smart
 	 * game.
 	 * 
-	 * @param intNoOfTurns How many maximum coordinates required
+	 * @param intNoOfTurns
+	 *            How many maximum coordinates required
 	 * @return Returns list of the coordinates
 	 */
 	public List<DataCoordinates> getFromAIAlgorithm(int intNoOfTurns) {
@@ -70,7 +70,8 @@ public class BattleFieldPlayer extends BattleFieldsParent {
 	/**
 	 * This method will calculate neighbors of the passed coordinates.
 	 * 
-	 * @param dc Object which contains x and y coordinates
+	 * @param dc
+	 *            Object which contains x and y coordinates
 	 * @return Returns List of the neighbors
 	 */
 	private List<DataCoordinates> getNeightbours(DataCoordinates dc) {

@@ -600,6 +600,28 @@ public class Main implements Initializable {
 		sendMessageToServer(sd);
 	}
 
+	@FXML
+	private void onReloadGame(ActionEvent event) {
+		ServerData sd = new ServerData(1, 11);
+		try {
+			sendMessageToServer(sd);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	private void onSaveGame(ActionEvent event) {
+		ServerData sd = new ServerData(1, 10);
+		try {
+			sendMessageToServer(sd);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	private void test() throws IOException {
 		// TODO Auto-generated method stub
 
@@ -779,91 +801,108 @@ public class Main implements Initializable {
 			break;
 		case 6:
 			boolIsComputerTurn = serverData.isComputerTurn;
+			break;
+		case 10:
+			System.out.println("case 10 Main");
+			if (serverData.intPlayerId == 1) {
+				taServerMessage.clear();
+				taServerMessage.setText("Game Is Saved");
+			} else {
+				taServerMessage.clear();
+				taServerMessage.setText("Other Player Want to Save a Game. You are no longer able to play this game");
+			}
+			break;
+		case 11:
+			if (serverData.flag) {
+				setShipsOnLocation(serverData.strSelf, serverData.strOther);
+				for (Node node : anchorPane.getChildren()) {
+					node.setOnMouseClicked(null);
+					node.setOnMouseDragged(null);
+					node.setOnMouseReleased(null);
+					node.setOnMousePressed(null);
+					node.setOnMouseEntered(null);
+				}
+				anchorPane.setOnMouseReleased(null);
+				anchorPane.setOnMouseDragged(null);
+				// bfComputer.deployComputerShips();
+				setComputerGridResponding();
+				taPlayerScore.clear();
+				Thread.sleep(100);
+				taPlayerScore.setText(serverData.intPlayerScore + "");
+				Thread.sleep(100);
+				taComputerScore.clear();
+				Thread.sleep(100);
+				taComputerScore.setText(serverData.intCompScore + "");
+				Thread.sleep(100);
+				taShipCntPlayer.clear();
+				Thread.sleep(100);
+				taShipCntPlayer.setText(serverData.intPlayerAliveShip + "");
+				Thread.sleep(100);
+				taShipCntComputer.clear();
+				Thread.sleep(100);
+				taShipCntComputer.setText(serverData.intCompAliveShip + "");
+
+			} else {
+				if (serverData.intPlayerId == 1) {
+					taServerMessage.clear();
+					taServerMessage.setText("No game found");
+					// print message : No game found
+				}
+			}
+			break;
 		}
 
 	}
 
-	/**
-	 * This method will make computer to play when the turn will come.
-	 * 
-	 * @throws InterruptedException
-	 */
-	// private void makeReadyComputerToPlay() throws InterruptedException {
-	// // TODO Auto-generated method stub
-	// System.out.println("in ready computer" + boolIsComputerTurn);
-	// int x, y;
-	// Random rand = new Random();
-	// int q = 1;
-	// w1: while (true) {
-	// System.out.print("");
-	//
-	// if (boolIsComputerTurn) {
-	// Thread.sleep((rand.nextInt(2) + 1) * 1000);
-	//
-	// bfComputer.intScore += (int) (45 / ((System.currentTimeMillis() - longTime))
-	// / 1000);
-	// taComputerScore.clear();
-	// taComputerScore.setText((bfComputer.intScore) + "");
-	// System.out.println("hi" + boolIsComputerTurn);
-	// List<DataCoordinates> lstBlocksToBeSelect =
-	// bfPlayer.getFromAIAlgorithm(intNoOfTurns);
-	// System.out.println("---" + lstBlocksToBeSelect.size());
-	//
-	// for (int i = 0; i < intNoOfTurns; i++) {
-	// lstNodeToSelect.clear();
-	// System.out.println("error4");
-	// if (lstBlocksToBeSelect.size() > 0) {
-	// x = lstBlocksToBeSelect.get(0).x;
-	// y = lstBlocksToBeSelect.get(0).y;
-	// } else {
-	// x = rand.nextInt(10);
-	// y = rand.nextInt(10);
-	// }
-	// System.out.println("error5:x,y" + x + "," + y);
-	// Rectangle r = (Rectangle) bfPlayer.getBlockNode(x, y);
-	// lstNodeToSelect.add(r);
-	//
-	// if (bfPlayer.isHit(x, y, boolIsSalvaVariation, r, 0)) {
-	// System.out.println("return true");
-	// taShipCntPlayer.clear();
-	// Thread.sleep(100);
-	// taShipCntPlayer.setText(bfPlayer.intTotalAliveShips + "");
-	// Thread.sleep(100);
-	// taComputerScore.clear();
-	// Thread.sleep(100);
-	// taComputerScore.setText(bfComputer.intScore + "");
-	// break;
-	// } else {
-	// if (!boolIsSalvaVariation) {
-	// boolIsComputerTurn = false;
-	// }
-	// }
-	// System.out.println("error3:size:" + lstBlocksToBeSelect.size());
-	// if (lstBlocksToBeSelect.size() > 0) {
-	// System.out.println("in if====");
-	// lstBlocksToBeSelect.remove(0);
-	// }
-	// System.out.println("error2");
-	// taShipCntPlayer.clear();
-	// System.out.println("line1");
-	// Thread.sleep(100);
-	// taShipCntPlayer.setText(bfPlayer.intTotalAliveShips + "");
-	// Thread.sleep(100);
-	// System.out.println("line2");
-	// taComputerScore.clear();
-	// Thread.sleep(100);
-	// System.out.println("line3");
-	// taComputerScore.setText(bfComputer.intScore + "");
-	// Thread.sleep(100);
-	// System.out.println("line4");
-	// }
-	// lstNodeToSelect.clear();
-	// if (boolIsSalvaVariation)
-	// boolIsComputerTurn = false;
-	// longTime = System.currentTimeMillis();
-	// }
-	// }
-	// }
+	private void setShipsOnLocation(String strS, String strO) {
+		// TODO Auto-generated method stub
+		char cahrArrS[][] = new char[10][10];
+		char cahrArrO[][] = new char[10][10];
+		int p = 0;
+		Rectangle r = null;
+		for (int i = 0; i < 100; i++) {
+			if (i % 10 == 0) {
+				p = 0;
+			}
+			cahrArrS[i / 10][p] = strS.charAt(i);
+			cahrArrO[i / 10][p] = strO.charAt(i);
+			p++;
+		}
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 10; j++) {
+				for (Node nd : gpPlayer.getChildren()) {
+					if (nd != null) {
+						if (GridPane.getRowIndex(nd) == i && GridPane.getColumnIndex(nd) == j) {
+							r = (Rectangle) nd;
+							if (cahrArrS[i][j] == 'S')
+								r.setFill(Color.DEEPSKYBLUE);
+							else if (cahrArrS[i][j] == 'H')
+								r.setFill(Color.RED);
+							else if (cahrArrS[i][j] == 'M')
+								r.setFill(Color.GREY);
+							else
+								r.setFill(Color.BLACK);
+							break;
+						}
+					}
+				}
+				for (Node nd : gpComputer.getChildren()) {
+					if (nd != null) {
+						if (GridPane.getRowIndex(nd) == i && GridPane.getColumnIndex(nd) == j) {
+							r = (Rectangle) nd;
+							if (cahrArrO[i][j] == 'H')
+								r.setFill(Color.RED);
+							else if (cahrArrO[i][j] == 'M')
+								r.setFill(Color.GREY);
+							else
+								r.setFill(Color.BLACK);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
 
 	class Delta {
 		double x;

@@ -17,6 +17,7 @@ import javafx.scene.shape.Rectangle;
 public abstract class BattleFieldsParent {
 
 	// GridPane gridPane;
+	public HashMap<String, ShipLatestLocation> mapShipLocation = new HashMap<>();
 	public int id;
 	public List<Ship2> lstShip = new ArrayList<>();
 	public ArrayList<ArrayList<Block>> gameBoard = new ArrayList<ArrayList<Block>>(10);
@@ -24,6 +25,7 @@ public abstract class BattleFieldsParent {
 	public int intScore = 0;
 	public boolean isSalva = false;
 	public boolean isReady = false;
+	public String strUserName = "";
 
 	/**
 	 * This Constructor will set the gridPane object and initial value of total
@@ -33,9 +35,10 @@ public abstract class BattleFieldsParent {
 	 *            Grid of the player
 	 */
 	// public BattleFieldsParent(GridPane gp) {
-	public BattleFieldsParent() {
+	public BattleFieldsParent(String strUserName) {
 		// this.gridPane = gp;
 		this.intTotalAliveShips = 5;
+		this.strUserName = strUserName;
 	}
 
 	/**
@@ -301,6 +304,7 @@ public abstract class BattleFieldsParent {
 	 */
 	public boolean allValidPositions(HashMap<String, ShipLatestLocation> mapShipLocation) {
 		// TODO Auto-generated method stub
+		this.mapShipLocation = mapShipLocation;
 		if (mapShipLocation.size() != 5)
 			return false;
 		boolean arrBool[][] = new boolean[10][10];
