@@ -24,10 +24,10 @@ public class ServerData implements Serializable {
 	public boolean isComputerTurn = false;
 	public boolean isWinner = false;
 
-	// public ServerData(int intPlayerId, int intOperationId) {
-	// this.intPlayerId = intPlayerId;
-	// this.intOperationId = intOperationId;
-	// }
+//	 public ServerData(int intPlayerId, int intOperationId) {
+//	 this.intPlayerId = intPlayerId;
+//	 this.intOperationId = intOperationId;
+//	 }
 
 	public ServerData(int intPlayerId, int intOperationId, HashMap<String, ShipLatestLocation> mapShipLocation) {
 		this.intPlayerId = intPlayerId;
@@ -87,8 +87,7 @@ public class ServerData implements Serializable {
 	}
 
 	// addShip
-	public ServerData(int intPlayerId, int intOperationId, int size, int x, int y, int endX, int endY,
-			boolean isDestroyed, boolean isRotated) {
+	public ServerData(int intPlayerId, int intOperationId, int size, int x, int y, int endX, int endY, boolean isDestroyed, boolean isRotated) {
 		this.intPlayerId = intPlayerId;
 		this.intOperationId = intOperationId;
 		this.size = size;
