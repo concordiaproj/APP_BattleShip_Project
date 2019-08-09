@@ -104,6 +104,8 @@ public class Main implements Initializable {
 	private Button bReload;
 	@FXML
 	private Button bSave;
+	@FXML
+	private Button bRestart;
 
 	// login module
 	@FXML
@@ -124,7 +126,7 @@ public class Main implements Initializable {
 		startButton.disableProperty().set(true);
 		bReload.disableProperty().set(true);
 		bSave.disableProperty().set(true);
-
+		bRestart.disableProperty().set(true);
 		// setUpUI();
 	}
 
@@ -635,6 +637,16 @@ public class Main implements Initializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		for (Node node : anchorPane.getChildren()) {
+			node.setOnMouseClicked(null);
+			node.setOnMouseDragged(null);
+			node.setOnMouseReleased(null);
+			node.setOnMousePressed(null);
+			node.setOnMouseEntered(null);
+		}
+		anchorPane.setOnMouseReleased(null);
+		anchorPane.setOnMouseDragged(null);
+		gpComputer.disableProperty().set(true);
 	}
 
 	@FXML
@@ -642,6 +654,7 @@ public class Main implements Initializable {
 		ServerData sd = new ServerData(1, 13);
 		try {
 			sendMessageToServer(sd);
+			setUpUI();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -764,6 +777,7 @@ public class Main implements Initializable {
 				taServerMessage.clear();
 				taServerMessage.setText("You can Start Game");
 				bSave.disableProperty().set(false);
+				bRestart.disableProperty().set(false);
 				//
 			} else if (reply == 2 && serverData.intPlayerId == 1) {
 
@@ -870,7 +884,9 @@ public class Main implements Initializable {
 		case 11:
 			if (serverData.flag) {
 				bSave.disableProperty().set(false);
+				bRestart.disableProperty().set(false);
 				setShipsOnLocation(serverData.strSelf, serverData.strOther);
+				boolIsSalvaVariation = serverData.isSalva;
 				for (Node node : anchorPane.getChildren()) {
 					node.setOnMouseClicked(null);
 					node.setOnMouseDragged(null);
@@ -933,8 +949,19 @@ public class Main implements Initializable {
 
 				Thread.sleep(100);
 				taServerMessage.setText("Other User want to restart a game");
+				Platform.runLater(() -> {
+					setUpUI();
+				});
 			}
-
+			for (Node nd : gpPlayer.getChildren()) {
+				Rectangle r = (Rectangle) nd;
+				r.setFill(Color.BLACK);
+			}
+			for (Node nd : gpComputer.getChildren()) {
+				Rectangle r = (Rectangle) nd;
+				r.setFill(Color.BLACK);
+			}
+			break;
 		}
 
 	}

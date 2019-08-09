@@ -151,6 +151,8 @@ public class Server {
 							bfComputer.intScore, bfPlayer.intTotalAliveShips, bfComputer.intTotalAliveShips, true);
 					sdTemp0 = new ServerData(sd.intPlayerId, intOperationId, str0, str1, bfComputer.intScore,
 							bfPlayer.intScore, bfComputer.intTotalAliveShips, bfPlayer.intTotalAliveShips, true);
+					sdTemp.isSalva = bfPlayer.isSalva;
+					sdTemp0.isSalva = bfPlayer.isSalva;
 					// if (bfPlayer.strUserName.equals(saveAndLoad.strUser1)
 					// && bfComputer.strUserName.equals(saveAndLoad.strUser0)) {
 					//

@@ -91,6 +91,7 @@ public class ServerData implements Serializable {
 		this.intPlayerAliveShip = intPlayerAliveShip;
 		this.intCompAliveShip = intCompAliveShip;
 		this.flag = flag;
+		// this.isSalva = isSalva;
 	}
 
 	// isHit
