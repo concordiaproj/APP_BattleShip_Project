@@ -1,35 +1,44 @@
 package application.Models;
 
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-
 /**
  * 
- * @author dhvaniagola This Class create a block.
+ * 
+ * @author dhvaniagola
+ * @author arunipatel
+ * @author SAHIL
  */
-public class Block extends Rectangle {
-	int x;
-	int y;
-	Battlefield bf;
+public class Block {
+	private char charOccupiedFor;
+	private int x;
+	private int y;
+	private Ship2 ship;
 
 	/**
+	 * This constructor set the information of each block of the grid
 	 * 
-	 * @param bf Battlefield
-	 * @param i  x-coordinate of a block
-	 * @param j  y-coordinate of a block It sets (x,y) coordinates of a block with
-	 *           associated color.
+	 * @param x               x-Coordinate of block
+	 * @param y               y-Coordinate of block
+	 * @param charOccupiedFor Char which define the state of the block
 	 */
-	public Block(Battlefield bf, int i, int j) {
-		// TODO Auto-generated constructor stub
-		super(50, 50);
-		this.x = i;
-		this.y = j;
-		this.bf = bf;
-		if (bf.id == 1)// player
-			setFill(Color.LIGHTGRAY);
-		else// computer
-			setFill(Color.WHITE);
-		setStroke(Color.BLACK);
+	public Block(int x, int y, char charOccupiedFor) {
+		this.charOccupiedFor = charOccupiedFor;
+		this.x = x;
+		this.y = y;
 	}
 
+	public void setShip(Ship2 ship) {
+		this.ship = ship;
+	}
+
+	public Ship2 getShip() {
+		return this.ship;
+	}
+
+	public void setCharOccupiedFor(char c) {
+		this.charOccupiedFor = c;
+	}
+
+	public char getCharOccupiedFor() {
+		return this.charOccupiedFor;
+	}
 }
