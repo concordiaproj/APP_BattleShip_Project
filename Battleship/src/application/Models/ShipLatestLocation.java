@@ -1,14 +1,12 @@
 package application.Models;
 
-import java.io.Serializable;
-
 /**
  * @author Sahana
  * @author sanja
  * @author dhvaniagola
  *
  */
-public class ShipLatestLocation implements Serializable {
+public class ShipLatestLocation {
 	public double intLocalX;
 	public double intLocalY;
 	public int size;

@@ -1,10 +1,9 @@
 package application.Models;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Ship2 implements Serializable {
+public class Ship2 {
 
 	int intSize;
 	int intStartX;
@@ -14,22 +13,16 @@ public class Ship2 implements Serializable {
 	boolean boolIsHit;
 	List<DataCoordinates> lstShipCoord = new ArrayList<>();
 
-	// String strShipId;
+//	String strShipId;
 	/**
 	 * This constructor set the information of a ship
 	 * 
-	 * @param intSize
-	 *            size of the ship
-	 * @param intStartX
-	 *            x-Coordinate of first block of the ship
-	 * @param intStartY
-	 *            y-Coordinate of first block of the ship
-	 * @param intEndX
-	 *            x-Coordinate of last block of the ship
-	 * @param intEndY
-	 *            y-Coordinate of last block of the ship
-	 * @param boolIsHit
-	 *            Is whole ship is hit or not
+	 * @param intSize   size of the ship
+	 * @param intStartX x-Coordinate of first block of the ship
+	 * @param intStartY y-Coordinate of first block of the ship
+	 * @param intEndX   x-Coordinate of last block of the ship
+	 * @param intEndY   y-Coordinate of last block of the ship
+	 * @param boolIsHit Is whole ship is hit or not
 	 */
 	public Ship2(int intSize, int intStartX, int intStartY, int intEndX, int intEndY, boolean boolIsHit) {
 		this.intSize = intSize;
@@ -38,7 +31,7 @@ public class Ship2 implements Serializable {
 		this.intEndX = intEndX;
 		this.intEndY = intEndY;
 		this.boolIsHit = boolIsHit;
-		// this.strShipId=strShipId;
+//		this.strShipId=strShipId;
 	}
 
 	public int getSX() {

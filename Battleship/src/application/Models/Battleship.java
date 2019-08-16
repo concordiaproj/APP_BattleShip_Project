@@ -17,12 +17,10 @@ import javafx.stage.Stage;
  *
  */
 public class Battleship extends Application {
-	public static Stage stage;
 
 	/**
 	 * 
 	 * @param args
-	 *            arguments for main method
 	 */
 	public static void main(String[] args) {
 		launch(args);
@@ -30,13 +28,10 @@ public class Battleship extends Application {
 
 	/**
 	 * @param stage
-	 *            Object of Stage
 	 * @throws Exception
-	 *             Exception for Parent class
 	 */
 	@Override
 	public void start(Stage stage) throws Exception {
-		this.stage = stage;
 		Parent root = FXMLLoader.load(getClass().getResource("/application/View/battleship.fxml"));
 
 		Scene scene = new Scene(root);

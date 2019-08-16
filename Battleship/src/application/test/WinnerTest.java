@@ -12,14 +12,14 @@ import junit.framework.Assert;
 
 public class WinnerTest {
 	private static GridPane gpPlayer;
-	static BattleFieldPlayer bfPlayer = new BattleFieldPlayer("Player");
+	static BattleFieldPlayer bfPlayer = new BattleFieldPlayer(gpPlayer);
 	private static GridPane gpComputer;
-	static BattleFieldPlayer bfComputer = new BattleFieldPlayer("Computer");
+	static BattleFieldPlayer bfComputer = new BattleFieldPlayer(gpComputer);
 	public ArrayList<ArrayList<Block>> gameBoard = new ArrayList<ArrayList<Block>>(10);
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		bfPlayer = new BattleFieldPlayer("Player");
+		bfPlayer = new BattleFieldPlayer(gpPlayer);
 	}
 
 	@Test
@@ -49,19 +49,4 @@ public class WinnerTest {
 		Assert.assertEquals(false, bfComputer.isWinner());
 		bfComputer.intTotalAliveShips = 5;
 	}
-
-	@Test
-	public void testIsComputerNotWinner1() {
-		bfComputer.intTotalAliveShips = 5;
-		Assert.assertEquals(false, bfComputer.isWinner());
-		bfComputer.intTotalAliveShips = 5;
-	}
-
-	@Test
-	public void testIsComputerNotWinner2() {
-		bfComputer.intTotalAliveShips = 1;
-		Assert.assertEquals(false, bfComputer.isWinner());
-		bfComputer.intTotalAliveShips = 5;
-	}
-
 }

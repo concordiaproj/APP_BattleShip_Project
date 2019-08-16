@@ -13,17 +13,17 @@ import junit.framework.Assert;
 
 public class AIValidationTest {
 	private static GridPane gpPlayer;
-	static BattleFieldPlayer bfPlayer = new BattleFieldPlayer("Player");
+	static BattleFieldPlayer bfPlayer = new BattleFieldPlayer(gpPlayer);
 	public ArrayList<ArrayList<Block>> gameBoard = new ArrayList<ArrayList<Block>>(10);
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		bfPlayer = new BattleFieldPlayer("Player");
+		bfPlayer = new BattleFieldPlayer(gpPlayer);
 	}
 
 	@Test
 	public void testGetFromAIAlgorithm() {
-		// DataCoordinates dc;// =new DataCoordinates(0, 0);
+//		DataCoordinates dc;// =new DataCoordinates(0, 0);
 		bfPlayer.stkHitPoints.clear();
 		Assert.assertEquals(0, bfPlayer.getFromAIAlgorithm(1).size());
 		bfPlayer.stkHitPoints.clear();
@@ -42,7 +42,7 @@ public class AIValidationTest {
 		DataCoordinates dc = new DataCoordinates(0, 0);
 		bfPlayer.stkHitPoints.push(dc);
 		int y = bfPlayer.getFromAIAlgorithm(5).size();
-		// System.out.println(y);
+//		System.out.println(y);
 		Assert.assertEquals(2, y);
 		bfPlayer.stkHitPoints.clear();
 	}

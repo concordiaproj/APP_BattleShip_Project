@@ -1,7 +1,5 @@
 package application.Models;
 
-import java.io.Serializable;
-
 /**
  * 
  * 
@@ -9,7 +7,7 @@ import java.io.Serializable;
  * @author arunipatel
  * @author SAHIL
  */
-public class Block implements Serializable {
+public class Block {
 	private char charOccupiedFor;
 	private int x;
 	private int y;
@@ -18,12 +16,9 @@ public class Block implements Serializable {
 	/**
 	 * This constructor set the information of each block of the grid
 	 * 
-	 * @param x
-	 *            x-Coordinate of block
-	 * @param y
-	 *            y-Coordinate of block
-	 * @param charOccupiedFor
-	 *            Char which define the state of the block
+	 * @param x               x-Coordinate of block
+	 * @param y               y-Coordinate of block
+	 * @param charOccupiedFor Char which define the state of the block
 	 */
 	public Block(int x, int y, char charOccupiedFor) {
 		this.charOccupiedFor = charOccupiedFor;

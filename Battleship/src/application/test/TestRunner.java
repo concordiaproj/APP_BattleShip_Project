@@ -6,7 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ AIValidationTest.class, AttackTest.class, CorrectStartUpTest.class, ShipPlacementTest.class,
-		TestCorrectHumanPlay.class, WinnerTest.class, setUserNameTest.class, AddUserTest.class })
+		TestCorrectHumanPlay.class, WinnerTest.class })
 
 public class TestRunner {
 

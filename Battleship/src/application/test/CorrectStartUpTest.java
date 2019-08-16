@@ -14,13 +14,13 @@ import junit.framework.Assert;
 public class CorrectStartUpTest {
 	private static GridPane gpPlayer;
 	private static GridPane gpComp;
-	static BattleFieldComputer bfComputer = new BattleFieldComputer("Computer");
-	static BattleFieldPlayer bfPlayer = new BattleFieldPlayer("Player");
+	static BattleFieldComputer bfComputer = new BattleFieldComputer(gpComp);
+	static BattleFieldPlayer bfPlayer = new BattleFieldPlayer(gpPlayer);
 	public ArrayList<ArrayList<Block>> gameBoard = new ArrayList<ArrayList<Block>>(10);
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		bfPlayer = new BattleFieldPlayer("Player");
+		bfPlayer = new BattleFieldPlayer(gpPlayer);
 	}
 
 	@Test
